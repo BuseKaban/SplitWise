@@ -26,9 +26,9 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
 
         return props.details?.map(item => {
             if (item.OweAmount > 0)
-                return <IonRow className='text-size'>{item.SplitterName} arkadaşına <IonText color="danger">&nbsp;{item.OweAmount}&nbsp;</IonText> borcun var</IonRow>
+                return <IonRow key={item.SplitterName} className='text-size'>{item.SplitterName} arkadaşına <IonText color="danger">&nbsp;{item.OweAmount}&nbsp;</IonText> borcun var</IonRow>
             else
-                return <IonRow className='text-size'>{item.SplitterName} arkadaşının sana <IonText color="success">&nbsp;{item.OweAmount}&nbsp;</IonText> borcu var</IonRow>
+                return <IonRow key={item.SplitterName} className='text-size'>{item.SplitterName} arkadaşının sana <IonText color="success">&nbsp;{item.OweAmount}&nbsp;</IonText> borcu var</IonRow>
         })
     }
 
