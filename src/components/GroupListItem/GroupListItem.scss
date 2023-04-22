@@ -1,0 +1,21 @@
+.red-text {
+    color: red;
+    --color: red;
+}
+
+.green-text {
+    color: rgb(48, 216, 42);
+    --color: rgb(48, 216, 42);
+}
+
+.text-size {
+    padding-inline-start: 12px;
+    padding-top: 4px;    
+    font-size: 12px;
+}
+
+.title-text{
+    font-family:cursive;
+    padding-bottom: 4px;
+}
+
