@@ -7,6 +7,7 @@ interface ContainerProps {
     groupName: string;
     totalOwe: number;
     details?: GroupSummaryDetail[];
+    routerLink: string;
 }
 
 const GroupListItem: React.FC<ContainerProps> = (props) => {
@@ -33,7 +34,7 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
     }
 
     return (
-        <IonItem button>
+        <IonItem routerLink={props.routerLink} button>
             <IonAvatar slot="start">
                 <img alt="Group Icon" src={props.imagePath} />
             </IonAvatar>

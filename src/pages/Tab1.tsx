@@ -1,21 +1,12 @@
-import { IonAvatar, IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonList, IonPage, IonReorder, IonReorderGroup, IonRow, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
+import { IonButton, IonContent, IonHeader, IonList, IonPage, IonReorder, IonReorderGroup, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
 import './Tab1.css';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import { IonSearchbarCustomEvent } from '@ionic/core';
 import { useState } from 'react';
-
-export interface GroupSummaryDetail {
-  SplitterName: string,
-  OweAmount: number
-}
-
-export interface GroupSummary {
-  GroupID: number,
-  GroupName: string,
-  SummaryAmount: number,
-  Details: GroupSummaryDetail[],
-}
+import { getDoc, doc } from "firebase/firestore";
+import {firestore} from "../firebase"
+import { GroupSummary } from '../interfaces/GroupSummary';
+import { User } from '../interfaces/User';
 
 
 const Tab1: React.FC = () => {
@@ -45,10 +36,23 @@ const Tab1: React.FC = () => {
   function handleSearch(ev: IonSearchbarCustomEvent<SearchbarInputEventDetail>): void {
     setResults(groupSummaries.filter(group => group.GroupName.toLowerCase().includes(ev.target.value!.toLowerCase())));
   }
+
+  const currentUser = { Groups: ["C4HRflhAi8gLJiTu4uuK"], Name: "Baran"} as User
   
+  async function GetGroups() {
+    try {
+      currentUser.Groups.forEach(async group => {
+        const docRef = doc(firestore, "groups", group);
+        const docSnap = await getDoc(docRef);
+        console.log(docSnap.data());
+      });
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
     console.log('Dragged from index', event.detail.from, 'to', event.detail.to);
-
     event.detail.complete();
   }
 
@@ -65,7 +69,7 @@ const Tab1: React.FC = () => {
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonSearchbar  onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
+            <IonSearchbar onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
           </IonToolbar>
         </IonHeader>
         <IonList>
@@ -73,12 +77,14 @@ const Tab1: React.FC = () => {
             {
               results.map(groupSummary =>
                 <IonReorder key={groupSummary.GroupID}>
-                  <GroupListItem imagePath={''} groupName={groupSummary.GroupName} totalOwe={groupSummary.SummaryAmount} details={groupSummary.Details}></GroupListItem>
+                  <GroupListItem routerLink={ "/groups/detail/" + groupSummary.GroupID } imagePath={''} groupName={groupSummary.GroupName} totalOwe={groupSummary.SummaryAmount} details={groupSummary.Details}></GroupListItem>
                 </IonReorder>
               )
             }
           </IonReorderGroup>
         </IonList>
+
+        <IonButton onClick={ () => GetGroups() }></IonButton>
       </IonContent>
     </IonPage>
   );

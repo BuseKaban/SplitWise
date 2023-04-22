@@ -34,6 +34,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import GroupDetailPage from './pages/GroupDetailPage';
 
 
 setupIonicReact();
@@ -46,6 +47,7 @@ const App: React.FC = () => (
           <Route exact path="/groups">
             <Tab1 />
           </Route>
+          <Route path="/groups/detail/:id" component={GroupDetailPage} />
           <Route exact path="/friends">
             <Tab2 />
           </Route>
