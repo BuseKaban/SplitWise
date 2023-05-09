@@ -2,53 +2,64 @@ import { IonButton, IonContent, IonHeader, IonList, IonPage, IonReorder, IonReor
 import './Tab1.css';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import { IonSearchbarCustomEvent } from '@ionic/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getDoc, doc } from "firebase/firestore";
 import {firestore} from "../firebase"
-import { GroupSummary } from '../interfaces/GroupSummary';
 import { User } from '../interfaces/User';
+import { GetSummary } from '../utils/Users';
 
 
 const Tab1: React.FC = () => {
-  const groupSummaries = [
-    {
-      GroupID: 1,
-      GroupName: "Evque",
-      SummaryAmount: 100,
-      Details: [
-        { SplitterName: "Baran", OweAmount: 20 },
-        { SplitterName: "Doğukan", OweAmount: 80 }
-      ]
-    },
-    {
-      GroupID: 2,
-      GroupName: "Gezmece",
-      SummaryAmount: -220,
-      Details: [
-        { SplitterName: "Baran", OweAmount: -300 },
-        { SplitterName: "Doğukan", OweAmount: 80 }
-      ]
-    }
+  useEffect(()=>{
+    GetSummary("C4HRflhAi8gLJiTu4uuK").then((result)=> {
+      setResults([result]);
+    })
+  }, []);
+
+
+  let groupSummaries = [
+    // {
+    //   GroupID: 1,
+    //   GroupName: "Evque",
+    //   SummaryAmount: 100,
+    //   Details: [
+    //     { SplitterName: "Baran", OweAmount: 20 },
+    //     { SplitterName: "Doğukan", OweAmount: 80 }
+    //   ]
+    // },
+    // {
+    //   GroupID: 2,
+    //   GroupName: "Gezmece",
+    //   SummaryAmount: -220,
+    //   Details: [
+    //     { SplitterName: "Baran", OweAmount: -300 },
+    //     { SplitterName: "Doğukan", OweAmount: 80 }
+    //   ]
+    // }
   ] as GroupSummary[]
 
-  let [results, setResults] = useState([...groupSummaries]);
+  let [results, setResults] = useState(groupSummaries);
 
   function handleSearch(ev: IonSearchbarCustomEvent<SearchbarInputEventDetail>): void {
     setResults(groupSummaries.filter(group => group.GroupName.toLowerCase().includes(ev.target.value!.toLowerCase())));
   }
 
-  const currentUser = { Groups: ["C4HRflhAi8gLJiTu4uuK"], Name: "Baran"} as User
+  const currentUser = { Groups: [], Name: "Baran"} as User
   
+
   async function GetGroups() {
     try {
       currentUser.Groups.forEach(async group => {
         const docRef = doc(firestore, "groups", group);
         const docSnap = await getDoc(docRef);
-        console.log(docSnap.data());
+        const data = docSnap.data();
+        
       });
     } catch (err) {
       console.log(err)
     }
+
+
   }
 
   function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
@@ -77,7 +88,12 @@ const Tab1: React.FC = () => {
             {
               results.map(groupSummary =>
                 <IonReorder key={groupSummary.GroupID}>
-                  <GroupListItem routerLink={ "/groups/detail/" + groupSummary.GroupID } imagePath={''} groupName={groupSummary.GroupName} totalOwe={groupSummary.SummaryAmount} details={groupSummary.Details}></GroupListItem>
+                  <GroupListItem 
+                    routerLink={ "/groups/detail/" + groupSummary.GroupID } 
+                    imagePath={''} 
+                    groupName={groupSummary.GroupName}
+                    totalOwe={groupSummary.SummaryAmount} 
+                    details={groupSummary.Details} />
                 </IonReorder>
               )
             }

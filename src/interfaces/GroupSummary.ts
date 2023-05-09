@@ -1,8 +1,6 @@
-import { GroupSummaryDetail } from "./GroupSummaryDetail";
-
-export interface GroupSummary {
-  GroupID: number,
+interface GroupSummary {
+  GroupID: string,
   GroupName: string,
   SummaryAmount: number,
-  Details: GroupSummaryDetail[],
+  Details: Map<string, number>
 }

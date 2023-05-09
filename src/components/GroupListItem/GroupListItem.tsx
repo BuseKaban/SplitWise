@@ -1,12 +1,11 @@
 import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText } from '@ionic/react';
-import { GroupSummaryDetail } from '../../pages/Tab1';
 import './GroupListItem.scss'
 
 interface ContainerProps {
     imagePath: string;
     groupName: string;
     totalOwe: number;
-    details?: GroupSummaryDetail[];
+    details?:  Map<string, number>;
     routerLink: string;
 }
 
@@ -25,11 +24,11 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
         if (props.totalOwe == 0)
             return "Borç yok";
 
-        return props.details?.map(item => {
-            if (item.OweAmount > 0)
-                return <IonRow key={item.SplitterName} className='text-size'>{item.SplitterName} arkadaşına <IonText color="danger">&nbsp;{item.OweAmount}&nbsp;</IonText> borcun var</IonRow>
+        return Array.from( props.details! ).map(([key, value]) => {
+            if (value > 0)
+                return <IonRow key={key} className='text-size'>{key} arkadaşına <IonText color="danger">&nbsp;{value}&nbsp;</IonText> borcun var</IonRow>
             else
-                return <IonRow key={item.SplitterName} className='text-size'>{item.SplitterName} arkadaşının sana <IonText color="success">&nbsp;{item.OweAmount}&nbsp;</IonText> borcu var</IonRow>
+                return <IonRow key={key} className='text-size'>{key} arkadaşının sana <IonText color="success">&nbsp;{value}&nbsp;</IonText> borcu var</IonRow>
         })
     }
 
