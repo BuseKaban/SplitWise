@@ -1,8 +1,9 @@
-import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, useHistory, useLocation } from 'react-router';
 import { GetTransactions, Transaction } from '../utils/Users';
 import TransactionListItem from '../components/TransactionListItem/TransactionListItem';
+import GroupListItem from '../components/GroupListItem/GroupListItem';
 
 
 interface GroupDetailPageProps
@@ -13,8 +14,8 @@ interface GroupDetailPageProps
 
 const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
 
-  let [results, setResults] = useState([] as Transaction[]);
-
+  const [results, setResults] = useState([] as Transaction[]);
+  const history = useHistory<GroupSummary>();
 
   useEffect(() => {
     GetTransactions("C4HRflhAi8gLJiTu4uuK").then((result) => {
@@ -27,25 +28,33 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>GroupDetailPage</IonTitle>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="#"></IonBackButton>
+          </IonButtons>
+          <GroupListItem
+            imagePath={''} groupName={history.location.state?.GroupName} totalOwe={history.location.state?.SummaryAmount} details={history.location.state?.Details}></GroupListItem>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">Group {match.params.id}
+      <IonContent className="ion-padding">
+
         <IonList>
           {
+
             results.map(transaction =>
 
               <TransactionListItem key={transaction.id}
                 //routerLink={"/groups/detail/" + transaction.GroupID}
-                date ={transaction.date}
+                date={transaction.date}
                 imagePath={''}
                 transactionName={transaction.name}
-                oweAmount={transaction.amount}
-                transactionOwnerID={transaction.owner}/>
+                totalAmount={transaction.amount}
+                oweAmount={transaction.amount / transaction.splitters.length}
+                transactionOwnerID={transaction.owner} />
 
             )
           }
         </IonList>
+
       </IonContent>
     </IonPage>
   );

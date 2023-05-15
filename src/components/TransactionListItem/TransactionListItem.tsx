@@ -2,6 +2,7 @@ import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText } from '@ionic/r
 
 import { currentUser, users } from '../../utils/Users';
 import { Transaction } from 'firebase/firestore';
+import { amountFormatter, getUserNameById } from '../../utils/Utils';
 
 interface ContainerProps {
     imagePath: string;
@@ -9,23 +10,24 @@ interface ContainerProps {
     oweAmount: number;
     date: Date;
     transactionOwnerID: string;
+    totalAmount: number;
 }
 
 const GroupListItem: React.FC<ContainerProps> = (props) => {
 
     function getTitle() {
         if (props.transactionOwnerID == currentUser.id)
-            return <IonLabel>{props.oweAmount} ödedin </IonLabel>;
+            return <IonLabel>{amountFormatter(props.totalAmount)} ödedin </IonLabel>;
         else
-            return <IonLabel>{props.transactionOwnerID} {props.oweAmount} ödedi</IonLabel>;
+            return <IonLabel>{getUserNameById(props.transactionOwnerID)} {amountFormatter(props.totalAmount)} ödedi</IonLabel>;
     }
 
     function getDetail() {
 
         if (props.transactionOwnerID == currentUser.id)
-            return <IonRow className='text-size'> <IonText color="success">&nbsp;{props.oweAmount}&nbsp;</IonText> alacaklısın</IonRow>
+            return <IonRow className='text-size'> <IonText color="success">&nbsp;{amountFormatter(props.oweAmount)}&nbsp;</IonText> alacaklısın</IonRow>
         else
-            return <IonRow className='text-size'> <IonText color="danger">&nbsp;{props.oweAmount}&nbsp;</IonText> borçlusun</IonRow>
+            return <IonRow className='text-size'> <IonText color="danger">&nbsp;{amountFormatter(props.oweAmount)}&nbsp;</IonText> borçlusun</IonRow>
 
     }
 

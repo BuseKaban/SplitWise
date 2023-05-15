@@ -1,38 +1,27 @@
-import { IonContent, IonHeader, IonList, IonPage, IonReorder, IonReorderGroup, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonList, IonPage, IonReorder, IonReorderGroup, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
 import './Tab1.css';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import { IonSearchbarCustomEvent } from '@ionic/core';
 import { useEffect, useState } from 'react';
 import { GetSummary } from '../utils/Users';
+import { useHistory } from 'react-router';
+import { addOutline, chevronUpCircle } from 'ionicons/icons';
+import Modal from '../components/Modal/Modal';
+
 
 
 const Tab1: React.FC = () => {
-  useEffect(()=>{
-    GetSummary("C4HRflhAi8gLJiTu4uuK").then((result)=> {
+  useEffect(() => {
+    GetSummary("C4HRflhAi8gLJiTu4uuK").then((result) => {
       setResults([result]);
     })
   }, []);
 
 
+  const history = useHistory();
+
   let groupSummaries = [
-    // {
-    //   GroupID: 1,
-    //   GroupName: "Evque",
-    //   SummaryAmount: 100,
-    //   Details: [
-    //     { SplitterName: "Baran", OweAmount: 20 },
-    //     { SplitterName: "Doğukan", OweAmount: 80 }
-    //   ]
-    // },
-    // {
-    //   GroupID: 2,
-    //   GroupName: "Gezmece",
-    //   SummaryAmount: -220,
-    //   Details: [
-    //     { SplitterName: "Baran", OweAmount: -300 },
-    //     { SplitterName: "Doğukan", OweAmount: 80 }
-    //   ]
-    // }
+
   ] as GroupSummary[]
 
   let [results, setResults] = useState(groupSummaries);
@@ -47,6 +36,10 @@ const Tab1: React.FC = () => {
     event.detail.complete();
   }
 
+
+  function navToDetail(group: GroupSummary) {
+    history.push("/groups/detail/" + group.GroupID, group);
+  }
   return (
     <IonPage>
       <IonHeader>
@@ -54,7 +47,7 @@ const Tab1: React.FC = () => {
           <IonTitle>My Groups</IonTitle>
         </IonToolbar>
         <IonToolbar>
-          <IonSearchbar onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
+          <IonSearchbar mode='ios' onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -68,17 +61,19 @@ const Tab1: React.FC = () => {
             {
               results.map(groupSummary =>
                 <IonReorder key={groupSummary.GroupID}>
-                  <GroupListItem 
-                    routerLink={ "/groups/detail/" + groupSummary.GroupID } 
-                    imagePath={''} 
+                  <GroupListItem
+                    onClickItem={() => { navToDetail(groupSummary) }}
+                    imagePath={''}
                     groupName={groupSummary.GroupName}
-                    totalOwe={groupSummary.SummaryAmount} 
+                    totalOwe={groupSummary.SummaryAmount}
                     details={groupSummary.Details} />
                 </IonReorder>
               )
             }
           </IonReorderGroup>
         </IonList>
+
+        <Modal></Modal>
       </IonContent>
     </IonPage>
   );
