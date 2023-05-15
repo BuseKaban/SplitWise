@@ -1,11 +1,8 @@
-import { IonButton, IonContent, IonHeader, IonList, IonPage, IonReorder, IonReorderGroup, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
+import { IonContent, IonHeader, IonList, IonPage, IonReorder, IonReorderGroup, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
 import './Tab1.css';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import { IonSearchbarCustomEvent } from '@ionic/core';
 import { useEffect, useState } from 'react';
-import { getDoc, doc } from "firebase/firestore";
-import {firestore} from "../firebase"
-import { User } from '../interfaces/User';
 import { GetSummary } from '../utils/Users';
 
 
@@ -44,23 +41,6 @@ const Tab1: React.FC = () => {
     setResults(groupSummaries.filter(group => group.GroupName.toLowerCase().includes(ev.target.value!.toLowerCase())));
   }
 
-  const currentUser = { Groups: [], Name: "Baran"} as User
-  
-
-  async function GetGroups() {
-    try {
-      currentUser.Groups.forEach(async group => {
-        const docRef = doc(firestore, "groups", group);
-        const docSnap = await getDoc(docRef);
-        const data = docSnap.data();
-        
-      });
-    } catch (err) {
-      console.log(err)
-    }
-
-
-  }
 
   function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
     console.log('Dragged from index', event.detail.from, 'to', event.detail.to);
@@ -99,8 +79,6 @@ const Tab1: React.FC = () => {
             }
           </IonReorderGroup>
         </IonList>
-
-        <IonButton onClick={ () => GetGroups() }></IonButton>
       </IonContent>
     </IonPage>
   );

@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
+import { DocumentSnapshot, doc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
 
 interface User {
@@ -13,12 +13,14 @@ interface Group {
     users: User[]
 }
 
-interface Transaction {
+export interface Transaction {
+    id: string,
     date: Date,
     name: string,
     owner: string,
     splitters: string[],
-    type: string
+    type: string,
+    amount: number
 }
 
 interface GroupSummary {
@@ -40,14 +42,48 @@ export const users: User[]= [
         password: "1",
     }
 ]
+export const currentUser = users[1]
 
 export const GetGroupsByUser = () => {
     return new Promise<string[]>((resolve, reject) => {
-        const docRef = doc(firestore, "users", users[0].id);
+        const docRef = doc(firestore, "users", users[1].id);
         getDoc(docRef).then((result)=> {
             console.log(result.get("groups"));
             resolve(result.get("groups"));
         });
+    })
+}
+
+export const GetTransactions = (groupID: string) => {
+    return new Promise<Transaction[]>((resolve, reject) => {
+        //firebase linki veriyor gibi düşün
+        const groupsDocRef = doc(firestore, "groups", groupID);
+        getDoc(groupsDocRef).then((groupData) => {
+            const transactionsKeys = groupData.get("transactions");
+
+            const promiseArray: Promise<DocumentSnapshot>[] = [];
+            
+            transactionsKeys.forEach((element:string) => {
+                const transactionDocRef = doc(firestore, "transactions", element);
+                promiseArray.push(getDoc(transactionDocRef));                                  
+            });
+
+            Promise.all(promiseArray).then((transactionArray) => {
+                const transactions = transactionArray.map(transactionSnapshot => {
+                    return  {
+                        id : transactionSnapshot.id,
+                        amount: transactionSnapshot.get("amount"),
+                        date: transactionSnapshot.get("date"),
+                        name: transactionSnapshot.get("name"),
+                        owner: transactionSnapshot.get("owner"),
+                        splitters: transactionSnapshot.get("splitters"),
+                        type: transactionSnapshot.get("type")
+                        } as Transaction
+                })
+                resolve(transactions);
+            });       
+        });
+
     })
 }
 
@@ -72,13 +108,16 @@ export const GetSummary = (groupID: string) => {
                         const transactionOwner = result.get("owner") as string;
                         const splitters = result.get("splitters") as string[];
     
-                        const isCurrentUserOwner = transactionOwner == users[0].id;
+                        const isCurrentUserOwner = transactionOwner == currentUser.id;
                         if(isCurrentUserOwner) {
-                            amount += transactionAmount
-                            splitters.forEach(splitter => {
+                            const owe = transactionAmount / splitters.length;
+                            amount += owe;
+                            splitters.filter(splitter => splitter != currentUser.id).forEach(splitter => {
+                                
                                 const owe = transactionAmount / splitters.length;
                                 const oweAmount = owes.get(splitter) ?? 0;
                                 owes.set(splitter, oweAmount - owe);
+                                
                             })
                         } else {
                             const owe = transactionAmount / splitters.length;
