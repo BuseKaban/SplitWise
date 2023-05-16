@@ -36,7 +36,6 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
         })
     }
 
-
     return (
         <IonItem onClick={props.onClickItem} button>
             <IonAvatar slot="start">

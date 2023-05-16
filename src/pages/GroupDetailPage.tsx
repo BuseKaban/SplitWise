@@ -1,7 +1,7 @@
 import { IonBackButton, IonButtons, IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory, useLocation } from 'react-router';
-import { GetTransactions, Transaction } from '../utils/Users';
+import { GetTransactions, GroupSummary, Transaction } from '../utils/Users';
 import TransactionListItem from '../components/TransactionListItem/TransactionListItem';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 

@@ -32,6 +32,8 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
+import './App.css';
+
 /* Theme variables */
 import './theme/variables.css';
 import GroupDetailPage from './pages/GroupDetailPage';
@@ -63,7 +65,7 @@ const App: React.FC = () => (
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/groups">
-            <IonIcon aria-hidden="true" icon={peopleSharp}/>
+            <IonIcon aria-hidden="true" icon={peopleSharp} />
             <IonLabel>Groups</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/friends">

@@ -3,7 +3,7 @@ import './Tab1.css';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import { IonSearchbarCustomEvent } from '@ionic/core';
 import { useEffect, useState } from 'react';
-import { GetSummary } from '../utils/Users';
+import { GetSummary, GroupSummary } from '../utils/Users';
 import { useHistory } from 'react-router';
 import { addOutline, chevronUpCircle } from 'ionicons/icons';
 import Modal from '../components/Modal/Modal';

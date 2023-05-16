@@ -1,5 +1,6 @@
-import { DocumentSnapshot, doc, getDoc } from "firebase/firestore";
+import { DocumentSnapshot, addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
+import { getUserNameById } from "./Utils";
 
 interface User {
     id: string,
@@ -7,11 +8,17 @@ interface User {
     password: string,
 }
 
+export interface Friend {
+    id: string,
+    username: string,
+}
+
 interface Group {
     name: string,
     transactions: Transaction[],
     users: User[]
 }
+
 
 export interface Transaction {
     id: string,
@@ -23,14 +30,14 @@ export interface Transaction {
     amount: number
 }
 
-interface GroupSummary {
+export interface GroupSummary {
     GroupID: string,
     GroupName: string,
     SummaryAmount: number,
     Details: Map<string, number>
 }
 
-export const users: User[]= [
+export const users: User[] = [
     {
         id: "DSuSrhD3OwmwgWNtLznz",
         username: "eftelya",
@@ -40,6 +47,12 @@ export const users: User[]= [
         id: "gtL8uFDNi6or9gikZCqE",
         username: "baran",
         password: "1",
+    },
+    {
+        id: "7PoyHeON9BwJUi7PnGVh",
+        username: "yigit",
+        password: "2"
+
     }
 ]
 export const currentUser = users[1]
@@ -47,7 +60,7 @@ export const currentUser = users[1]
 export const GetGroupsByUser = () => {
     return new Promise<string[]>((resolve, reject) => {
         const docRef = doc(firestore, "users", users[1].id);
-        getDoc(docRef).then((result)=> {
+        getDoc(docRef).then((result) => {
             console.log(result.get("groups"));
             resolve(result.get("groups"));
         });
@@ -62,26 +75,26 @@ export const GetTransactions = (groupID: string) => {
             const transactionsKeys = groupData.get("transactions");
 
             const promiseArray: Promise<DocumentSnapshot>[] = [];
-            
-            transactionsKeys.forEach((element:string) => {
+
+            transactionsKeys.forEach((element: string) => {
                 const transactionDocRef = doc(firestore, "transactions", element);
-                promiseArray.push(getDoc(transactionDocRef));                                  
+                promiseArray.push(getDoc(transactionDocRef));
             });
 
             Promise.all(promiseArray).then((transactionArray) => {
                 const transactions = transactionArray.map(transactionSnapshot => {
-                    return  {
-                        id : transactionSnapshot.id,
+                    return {
+                        id: transactionSnapshot.id,
                         amount: transactionSnapshot.get("amount"),
                         date: transactionSnapshot.get("date"),
                         name: transactionSnapshot.get("name"),
                         owner: transactionSnapshot.get("owner"),
                         splitters: transactionSnapshot.get("splitters"),
                         type: transactionSnapshot.get("type")
-                        } as Transaction
+                    } as Transaction
                 })
                 resolve(transactions);
-            });       
+            });
         });
 
     })
@@ -90,43 +103,43 @@ export const GetTransactions = (groupID: string) => {
 export const GetSummary = (groupID: string) => {
     return new Promise<GroupSummary>((resolve, reject) => {
         const groupsDocRef = doc(firestore, "groups", groupID);
-        getDoc(groupsDocRef).then((result)=> {
+        getDoc(groupsDocRef).then((result) => {
             let amount = 0;
             let owes = new Map<string, number>();
-            
+
             const resolvedPromisesArray: Promise<any>[] = [];
 
             const transactions = result.get("transactions");
             transactions.forEach((transaction: string) => {
                 const transactionDocRef = doc(firestore, "transactions", transaction);
-                resolvedPromisesArray.push( getDoc(transactionDocRef));
+                resolvedPromisesArray.push(getDoc(transactionDocRef));
             });
 
             Promise.all(resolvedPromisesArray).then((values) => {
                 values.forEach((result) => {
-                        const transactionAmount = result.get("amount") as number;
-                        const transactionOwner = result.get("owner") as string;
-                        const splitters = result.get("splitters") as string[];
-    
-                        const isCurrentUserOwner = transactionOwner == currentUser.id;
-                        if(isCurrentUserOwner) {
+                    const transactionAmount = result.get("amount") as number;
+                    const transactionOwner = result.get("owner") as string;
+                    const splitters = result.get("splitters") as string[];
+
+                    const isCurrentUserOwner = transactionOwner == currentUser.id;
+                    if (isCurrentUserOwner) {
+                        const owe = transactionAmount / splitters.length;
+                        amount += owe;
+                        splitters.filter(splitter => splitter != currentUser.id).forEach(splitter => {
+
                             const owe = transactionAmount / splitters.length;
-                            amount += owe;
-                            splitters.filter(splitter => splitter != currentUser.id).forEach(splitter => {
-                                
-                                const owe = transactionAmount / splitters.length;
-                                const oweAmount = owes.get(splitter) ?? 0;
-                                owes.set(splitter, oweAmount - owe);
-                                
-                            })
-                        } else {
-                            const owe = transactionAmount / splitters.length;
-                            amount -= owe;
-                            
-                            const oweAmount = owes.get(transactionOwner) ?? 0;
-                            owes.set(transactionOwner, oweAmount + owe);
-                        }
-    
+                            const oweAmount = owes.get(splitter) ?? 0;
+                            owes.set(splitter, oweAmount - owe);
+
+                        })
+                    } else {
+                        const owe = transactionAmount / splitters.length;
+                        amount -= owe;
+
+                        const oweAmount = owes.get(transactionOwner) ?? 0;
+                        owes.set(transactionOwner, oweAmount + owe);
+                    }
+
                 });
             }).then(() => {
                 resolve({
@@ -138,9 +151,35 @@ export const GetSummary = (groupID: string) => {
             });
 
 
-        
-         
+
+
         });
-        
+
     })
+}
+
+export const GetFriends = () => {
+    return new Promise<Friend[]>((resolve, reject) => {
+        //firebase linki veriyor gibi düşün
+        const userDocRef = doc(firestore, "users", currentUser.id);
+        getDoc(userDocRef).then((userData) => {
+            const friendsKeys = userData.get("friends") as string[];
+            const friends = friendsKeys.map(key => {
+                return {
+                    id: key,
+                    username: getUserNameById(key)
+                } as Friend
+            });
+
+            resolve(friends);
+        });
+
+    })
+}
+
+export const AddGroup = (groupName: string, friends: Friend[]) => {
+
+    const groupColRef = collection(firestore, "groups");
+    addDoc(groupColRef, { name: "deneme grubu", users: ["sdfs", "se"] })
+
 }

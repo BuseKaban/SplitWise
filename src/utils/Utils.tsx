@@ -1,7 +1,7 @@
 import { users } from "./Users"
 
 export const getUserNameById = (id: string) => {
-    return users.find(user => user.id == id)?.username;
+    return users.find(user => user.id == id)?.username ?? "User Doesnt Exist";
 }
 
 export const amountFormatter = (amount: number, minimumFractionDigits = 2, maximumFractionDigits = minimumFractionDigits) => {
@@ -14,3 +14,4 @@ export const amountFormatter = (amount: number, minimumFractionDigits = 2, maxim
             minimumFractionDigits: minimumFractionDigits
         }).format(amount);
 }
+
