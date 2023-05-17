@@ -1,4 +1,4 @@
-import { DocumentSnapshot, addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { DocumentSnapshot, addDoc, collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { firestore } from "../firebase";
 import { getUserNameById } from "./Utils";
 
@@ -162,6 +162,7 @@ export const GetFriends = () => {
     return new Promise<Friend[]>((resolve, reject) => {
         //firebase linki veriyor gibi düşün
         const userDocRef = doc(firestore, "users", currentUser.id);
+        onSnapshot(collection(firestore, "groups"), (doc) => console.log(doc))
         getDoc(userDocRef).then((userData) => {
             const friendsKeys = userData.get("friends") as string[];
             const friends = friendsKeys.map(key => {

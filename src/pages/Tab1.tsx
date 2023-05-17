@@ -9,7 +9,7 @@ import { addOutline, chevronUpCircle } from 'ionicons/icons';
 import Modal from '../components/Modal/Modal';
 
 
-
+//burdayız
 const Tab1: React.FC = () => {
   useEffect(() => {
     GetSummary("C4HRflhAi8gLJiTu4uuK").then((result) => {
