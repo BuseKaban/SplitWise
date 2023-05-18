@@ -1,4 +1,4 @@
-import { DocumentSnapshot, addDoc, collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { DocumentSnapshot, Timestamp, addDoc, collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { firestore } from "../firebase";
 import { getUserNameById } from "./Utils";
 
@@ -21,13 +21,15 @@ interface Group {
 
 
 export interface Transaction {
+    groupID: string;
     id: string,
     date: Date,
     name: string,
     owner: string,
     splitters: string[],
     type: string,
-    amount: number
+    amount: number,
+    groupName: string
 }
 
 export interface GroupSummary {
@@ -57,9 +59,9 @@ export const users: User[] = [
 ]
 export const currentUser = users[1]
 
-export const GetGroupsByUser = () => {
+export const GetGroups = () => {
     return new Promise<string[]>((resolve, reject) => {
-        const docRef = doc(firestore, "users", users[1].id);
+        const docRef = doc(firestore, "users", currentUser.id);
         getDoc(docRef).then((result) => {
             console.log(result.get("groups"));
             resolve(result.get("groups"));
@@ -73,6 +75,7 @@ export const GetTransactions = (groupID: string) => {
         const groupsDocRef = doc(firestore, "groups", groupID);
         getDoc(groupsDocRef).then((groupData) => {
             const transactionsKeys = groupData.get("transactions");
+            const groupName = groupData.get("name");
 
             const promiseArray: Promise<DocumentSnapshot>[] = [];
 
@@ -86,11 +89,13 @@ export const GetTransactions = (groupID: string) => {
                     return {
                         id: transactionSnapshot.id,
                         amount: transactionSnapshot.get("amount"),
-                        date: transactionSnapshot.get("date"),
+                        date: transactionSnapshot.get("date").toDate(),
                         name: transactionSnapshot.get("name"),
                         owner: transactionSnapshot.get("owner"),
                         splitters: transactionSnapshot.get("splitters"),
-                        type: transactionSnapshot.get("type")
+                        type: transactionSnapshot.get("type"),
+                        groupName: groupName,
+                        groupID: groupID
                     } as Transaction
                 })
                 resolve(transactions);

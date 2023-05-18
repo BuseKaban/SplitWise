@@ -63,7 +63,7 @@ const Tab1: React.FC = () => {
                 <IonReorder key={groupSummary.GroupID}>
                   <GroupListItem
                     onClickItem={() => { navToDetail(groupSummary) }}
-                    imagePath={''}
+                    imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'}
                     groupName={groupSummary.GroupName}
                     totalOwe={groupSummary.SummaryAmount}
                     details={groupSummary.Details} />

@@ -1,6 +1,5 @@
 import { IonButton, IonContent, IonDatetime, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
-import './Tab3.css';
 
 const Tab4: React.FC = () => {
   return (
@@ -16,7 +15,7 @@ const Tab4: React.FC = () => {
             <IonTitle size="large">Tab 4</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name = "selam"></ExploreContainer>
+        <ExploreContainer name="selam"></ExploreContainer>
         <IonButton mode='ios'>Default</IonButton>
         <IonButton mode='md'>Default</IonButton>
       </IonContent>

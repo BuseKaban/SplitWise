@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonItem, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonAvatar, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab2.css';
 import { useEffect, useState } from 'react';
@@ -32,10 +32,16 @@ const Tab2: React.FC = () => {
         </IonHeader>
         <IonList>
           {friends.map((friend) =>
-            <IonItem>{friend.username}</IonItem>
+            <IonItem>
+              <IonAvatar slot="start">
+                <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+              </IonAvatar>
+              <IonLabel>
+                {friend.username}
+              </IonLabel>
+            </IonItem>
           )}
         </IonList>
-        <ExploreContainer name="Arkadaş listesi yapılacak" />
       </IonContent>
     </IonPage>
   );

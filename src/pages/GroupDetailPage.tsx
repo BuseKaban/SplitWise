@@ -32,7 +32,7 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
             <IonBackButton defaultHref="#"></IonBackButton>
           </IonButtons>
           <GroupListItem
-            imagePath={''} groupName={history.location.state?.GroupName} totalOwe={history.location.state?.SummaryAmount} details={history.location.state?.Details}></GroupListItem>
+            imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'} groupName={history.location.state?.GroupName} totalOwe={history.location.state?.SummaryAmount} details={history.location.state?.Details}></GroupListItem>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
