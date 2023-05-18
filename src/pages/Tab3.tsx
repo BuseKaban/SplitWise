@@ -1,7 +1,7 @@
 import { IonAvatar, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import { useEffect, useState } from 'react';
-import { GetGroups, GetTransactions, Transaction, currentUser } from '../utils/Users';
+import { GetGroupsKeys, GetTransactions, Transaction, currentUser } from '../utils/Users';
 import { amountFormatter, getUserNameById } from '../utils/Utils';
 import { format } from 'date-fns';
 import "./Tab3.scss";
@@ -12,7 +12,7 @@ const Tab3: React.FC = () => {
   const currentYear = new Date().getUTCFullYear();
 
   useEffect(() => {
-    GetGroups().then((groupKeys) => {
+    GetGroupsKeys().then((groupKeys) => {
       groupKeys.forEach((groupKey) => {
 
         const transactionPromiseList = [];

@@ -18,7 +18,7 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
   const history = useHistory<GroupSummary>();
 
   useEffect(() => {
-    GetTransactions("C4HRflhAi8gLJiTu4uuK").then((result) => {
+    GetTransactions(match.params.id).then((result) => {
       setResults(result);
     })
   }, []);

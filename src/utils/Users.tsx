@@ -1,4 +1,4 @@
-import { DocumentSnapshot, Timestamp, addDoc, collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { DocumentSnapshot, Firestore, Timestamp, addDoc, collection, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
 import { getUserNameById } from "./Utils";
 
@@ -59,11 +59,11 @@ export const users: User[] = [
 ]
 export const currentUser = users[1]
 
-export const GetGroups = () => {
+export const GetGroupsKeys = () => {
     return new Promise<string[]>((resolve, reject) => {
         const docRef = doc(firestore, "users", currentUser.id);
         getDoc(docRef).then((result) => {
-            console.log(result.get("groups"));
+            //console.log(result.get("groups"));
             resolve(result.get("groups"));
         });
     })
@@ -167,7 +167,7 @@ export const GetFriends = () => {
     return new Promise<Friend[]>((resolve, reject) => {
         //firebase linki veriyor gibi düşün
         const userDocRef = doc(firestore, "users", currentUser.id);
-        onSnapshot(collection(firestore, "groups"), (doc) => console.log(doc))
+        //onSnapshot(collection(firestore, "groups"), (doc) => console.log(doc))
         getDoc(userDocRef).then((userData) => {
             const friendsKeys = userData.get("friends") as string[];
             const friends = friendsKeys.map(key => {
@@ -184,8 +184,40 @@ export const GetFriends = () => {
 }
 
 export const AddGroup = (groupName: string, friends: Friend[]) => {
+    const groupUsers = [currentUser.id, ...friends.map(f => f.id)]
 
     const groupColRef = collection(firestore, "groups");
-    addDoc(groupColRef, { name: "deneme grubu", users: ["sdfs", "se"] })
+    addDoc(groupColRef, { name: groupName, users: groupUsers, transactions: [] as string[] }).then(groupData => {
+        groupUsers.forEach(user => {
+            const userDocRef = doc(firestore, "users", user);
+            getDoc(userDocRef).then((userData) => {
+                const groups = userData.get("groups") as string[];
+                updateDoc(userDocRef, { "groups": [...groups, groupData.id] });
+            });
+        })
+
+    })
 
 }
+
+export const onGroupsChanged = (handler: any) => {
+    onSnapshot(doc(firestore, "users", currentUser.id), { includeMetadataChanges: true }, (doc) => {
+        if (doc.metadata.hasPendingWrites) return
+        handler()
+    })
+}
+
+
+export const GetAllSummaries = () => {
+
+    return new Promise<GroupSummary[]>((resolve, reject) => {
+
+        GetGroupsKeys().then(keys => {
+            const allSummaryPromiseList: Promise<GroupSummary>[] = [];
+            keys.forEach(anahtar => allSummaryPromiseList.push(GetSummary(anahtar)));
+            Promise.all(allSummaryPromiseList).then(groupSummaryList => resolve(groupSummaryList));
+        });
+    });
+}
+
+
