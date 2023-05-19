@@ -1,4 +1,4 @@
-import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText } from '@ionic/react';
+import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText, IonIcon } from '@ionic/react';
 import './GroupListItem.scss'
 import { Transaction, users } from '../../utils/Users';
 import { amountFormatter } from '../../utils/Utils';
@@ -42,7 +42,9 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
         <IonItem className={props.className} lines={props.lines ?? "full"} onClick={props.onClickItem} button>
             <IonAvatar slot="start">
                 <img alt="Group Icon" src={props.imagePath} />
+
             </IonAvatar>
+
             <IonGrid>
                 <IonRow className='title-text'>{props.groupName}</IonRow>
                 <IonRow>{summaryTitle(props.totalOwe)}</IonRow>

@@ -76,33 +76,45 @@ const TransactionModal: React.FC = () => {
       </IonFab>
       <IonModal className='modal' ref={modal} trigger="open-transaction-modal" initialBreakpoint={0.80} breakpoints={[0, 0.80]}>
         <div className="ion-padding pt-8 flex flex-col h-4/5 justify-start items-center">
+          <IonList className='w-52'>
+            <IonItem>
+              <IonInput
+                id="transactionname"
+                label="İsim :"
+                placeholder="İsim girin"
+                color="primary"
+                className='text-right'
+                onIonChange={(e) => setTransactionAmount((e.detail.value ?? 0) as number)}
+              ></IonInput>
+            </IonItem>
+            <IonItem mode='ios'>
+              <IonSelect label="Tür :" placeholder='Tür seçin' interface='action-sheet'>
+                <IonSelectOption value="fatura">Fatura</IonSelectOption>
+                <IonSelectOption value="kira">Kira</IonSelectOption>
+                <IonSelectOption value="market">Market</IonSelectOption>
+                <IonSelectOption value="saglik">Sağlık</IonSelectOption>
+                <IonSelectOption value="egitim">Eğitim</IonSelectOption>
+                <IonSelectOption value="ulasim">Ulaşım</IonSelectOption>
+                <IonSelectOption value="diger">Diğer</IonSelectOption>
+              </IonSelect>
+            </IonItem>
+            <IonItem>
+              <IonInput
+                type='number'
+                id="groupname"
+                label="Tutar :"
+                placeholder={amountFormatter(0)}
+                color="primary"
+                className='text-right'
+                onIonChange={(e) => setTransactionAmount((e.detail.value ?? 0) as number)}
+              ></IonInput>
+            </IonItem>
+          </IonList>
 
-          <IonInput
-            type='number'
-            id="groupname"
-            label="Enter group name"
-            placeholder={amountFormatter(0)}
-            labelPlacement="floating"
-            counter={true}
-            color="primary"
-            maxlength={20}
-            mode='ios'
-            className='w-64 m-4'
-            errorText='deneme'
-            onIonChange={(e) => setTransactionAmount((e.detail.value ?? 0) as number)}
-          ></IonInput>
 
-          <IonItem className='item' mode='ios'>
-            <IonSelect className="selection" aria-label="expense type" interface="action-sheet" placeholder="Harcama Tipi">
-              <IonSelectOption value="fatura">Fatura</IonSelectOption>
-              <IonSelectOption value="kira">Kira</IonSelectOption>
-              <IonSelectOption value="market">Market</IonSelectOption>
-              <IonSelectOption value="saglik">Sağlık</IonSelectOption>
-              <IonSelectOption value="egitim">Eğitim</IonSelectOption>
-              <IonSelectOption value="ulasim">Ulaşım</IonSelectOption>
-              <IonSelectOption value="diger">Diğer</IonSelectOption>
-            </IonSelect>
-          </IonItem>
+
+
+
 
 
           <IonSearchbar
@@ -129,7 +141,7 @@ const TransactionModal: React.FC = () => {
           <IonList className='w-full' >
             {filteredFriends.length > 0 ?
               filteredFriends.map((friend) => (
-                <IonItem button onClick={() => handleFilteredFriendSelection(friend)} key={friend.id}>
+                <IonItem lines='full' button onClick={() => handleFilteredFriendSelection(friend)} key={friend.id}>
                   {friend.username}
                 </IonItem>
               )) : <IonLabel>Hiç arkadaşın kalmadı :(</IonLabel>}

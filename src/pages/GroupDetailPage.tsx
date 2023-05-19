@@ -55,6 +55,7 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
                 //routerLink={"/groups/detail/" + transaction.GroupID}
                 date={transaction.date}
                 imagePath={''}
+                ion-icon-name="people-circle-outline"
                 transactionName={transaction.name}
                 totalAmount={transaction.amount}
                 oweAmount={transaction.amount / transaction.splitters.length}

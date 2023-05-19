@@ -35,6 +35,7 @@ const Modal: React.FC = () => {
   const [selectedFriends, setSelectedFriends] = useState([] as Friend[]);
 
 
+
   useEffect(() => {
     GetFriends().then((friends) => {
       setAllFriends(friends)
@@ -71,7 +72,7 @@ const Modal: React.FC = () => {
       modal.current?.dismiss();
     }
     else {
-      //uyarı ver
+
     }
   }
 
@@ -86,30 +87,27 @@ const Modal: React.FC = () => {
       <IonModal ref={modal} trigger="open-modal" initialBreakpoint={0.80} breakpoints={[0, 0.80]}>
         <div className="ion-padding pt-8 flex flex-col h-4/5 justify-start items-center">
 
-          <IonItem className='w-28 h-28' onClick={takePhoto}>
+          <IonItem className='w-28 h-28' onClick={takePhoto} >
             <IonImg className='w-28 h-28' src={photo?.webviewPath ?? "https://ionicframework.com/docs/img/demos/avatar.svg"} />
           </IonItem>
-
           <IonInput
             id="groupname"
-            label="Enter group name"
+            label="Grubunun adını gir :"
             labelPlacement="floating"
             counter={true}
             color="primary"
             maxlength={20}
             mode='ios'
-            className='w-64 m-4'
-            errorText='deneme'
-            counterFormatter={(inputLength, maxLength) => `${maxLength - inputLength} characters remaining`}
+            className='w-4/5 m-4'
+            errorText='Lütfen tüm bilgileri doldurun.'
+            counterFormatter={(inputLength, maxLength) => `${maxLength - inputLength} karakter kaldı`}
             onIonChange={(e) => setGroupName(e.detail.value ?? "")}
           ></IonInput>
-
-
           <IonSearchbar
+            placeholder='Arkadaşlarını ara'
             className='ion-no-padding ion-no-border pb-4'
             showClearButton="focus"
             onIonInput={(ev) => setFilterText(ev.detail.value?.toLowerCase() ?? '')}
-
           >
           </IonSearchbar>
 
