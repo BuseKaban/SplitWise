@@ -1,7 +1,7 @@
 import { IonBackButton, IonButtons, IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory, useLocation } from 'react-router';
-import { GetTransactions, GroupSummary, Transaction } from '../utils/Users';
+import { GetSummary, GetTransactions, GroupSummary, Transaction } from '../utils/Users';
 import TransactionListItem from '../components/TransactionListItem/TransactionListItem';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import TransactionModal from '../components/Modal/TransactionModal';
@@ -18,11 +18,15 @@ interface GroupDetailPageProps
 const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
 
   const [results, setResults] = useState([] as Transaction[]);
-  const history = useHistory<GroupSummary>();
+  const [summary, setSummary] = useState<GroupSummary>()
 
   useEffect(() => {
     GetTransactions(match.params.id).then((result) => {
       setResults(result);
+    })
+
+    GetSummary(match.params.id).then((result) => {
+      setSummary(result);
     })
   }, []);
 
@@ -33,34 +37,30 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
         <IonToolbar>
           <IonButtons slot='start'>
             <IonBackButton defaultHref="#"></IonBackButton>
+            <IonTitle>Grup Detayları</IonTitle>
           </IonButtons>
         </IonToolbar>
         <GroupListItem
           className='group-summary-header'
           lines='none'
-          imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'}
-          groupName={history.location.state?.GroupName}
-          totalOwe={history.location.state?.SummaryAmount}
-          details={history.location.state?.Details}
+          groupName={summary?.GroupName}
+          totalOwe={summary?.SummaryAmount}
+          details={summary?.Details}
         ></GroupListItem>
       </IonHeader>
       <IonContent className="ion-padding">
 
-        <IonList>
+        <IonList className='p-0'>
           {
-
             results.map(transaction =>
-
               <TransactionListItem key={transaction.id}
                 //routerLink={"/groups/detail/" + transaction.GroupID}
                 date={transaction.date}
-                imagePath={''}
-                ion-icon-name="people-circle-outline"
+                imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'}
                 transactionName={transaction.name}
                 totalAmount={transaction.amount}
                 oweAmount={transaction.amount / transaction.splitters.length}
                 transactionOwnerID={transaction.owner} />
-
             )
           }
         </IonList>

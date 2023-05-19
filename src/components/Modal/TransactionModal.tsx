@@ -7,7 +7,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 import { AddGroup, Friend, GetFriends } from '../../utils/Users';
 
-import './transactionModal.scss';
+import './TransactionModal.scss';
 import { amountFormatter } from '../../utils/Utils';
 
 const TransactionModal: React.FC = () => {

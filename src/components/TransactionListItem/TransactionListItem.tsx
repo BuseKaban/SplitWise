@@ -1,8 +1,9 @@
-import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText } from '@ionic/react';
+import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText, IonIcon } from '@ionic/react';
 
 import { currentUser, users } from '../../utils/Users';
 import { Transaction } from 'firebase/firestore';
 import { amountFormatter, getUserNameById } from '../../utils/Utils';
+import { cashOutline, logoIonic } from 'ionicons/icons';
 
 interface ContainerProps {
     imagePath: string;
@@ -13,7 +14,7 @@ interface ContainerProps {
     totalAmount: number;
 }
 
-const GroupListItem: React.FC<ContainerProps> = (props) => {
+const TransactionListItem: React.FC<ContainerProps> = (props) => {
 
     function getTitle() {
         if (props.transactionOwnerID == currentUser.id)
@@ -32,10 +33,9 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
     }
 
     return (
-        <IonItem button>
-            <IonAvatar slot="start">
-                <img alt="Group Icon" src={props.imagePath} />
-            </IonAvatar>
+        <IonItem button style={{ "--padding-start": "0px" }}>
+            <IonIcon className='bg-green-100 p-3 rounded-full mr-4' slot='start' icon={cashOutline} size="large" color="primary"></IonIcon>
+
             <IonGrid>
                 <IonRow className='title-text'>{props.transactionName}</IonRow>
                 <IonRow>{getTitle()}</IonRow>
@@ -45,4 +45,4 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
     );
 };
 
-export default GroupListItem;
+export default TransactionListItem;
