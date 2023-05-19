@@ -53,11 +53,13 @@ export const users: User[] = [
     {
         id: "7PoyHeON9BwJUi7PnGVh",
         username: "yigit",
-        password: "2"
+        password: "1"
 
     }
 ]
-export const currentUser = users[1]
+export const setCurrentUser = (user: User) => { currentUser = user };
+//dahas onra
+export let currentUser = users[0];
 
 export const GetGroupsKeys = () => {
     return new Promise<string[]>((resolve, reject) => {
@@ -205,6 +207,7 @@ export const onGroupsChanged = (handler: any) => {
         if (doc.metadata.hasPendingWrites) return
         handler()
     })
+
 }
 
 
@@ -220,4 +223,10 @@ export const GetAllSummaries = () => {
     });
 }
 
+export const AddTransaction = (transaction: Transaction) => {
 
+    const groupColRef = collection(firestore, "transactions");
+    addDoc(groupColRef, transaction);
+
+
+}

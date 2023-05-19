@@ -6,7 +6,7 @@ const Tab4: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle> Activity</IonTitle>
+          <IonTitle>Hesabım</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -15,7 +15,7 @@ const Tab4: React.FC = () => {
             <IonTitle size="large">Tab 4</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name="selam"></ExploreContainer>
+
         <IonButton mode='ios'>Default</IonButton>
         <IonButton mode='md'>Default</IonButton>
       </IonContent>

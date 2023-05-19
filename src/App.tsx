@@ -15,6 +15,7 @@ import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
 import Tab4 from './pages/Tab4';
+import Login from './components/Login/Login'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -46,13 +47,20 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
+          <Route exact path="/login" >
+            <Login />
+          </Route>
+
           <Route exact path="/groups">
             <Tab1 />
           </Route>
+
           <Route path="/groups/detail/:id" component={GroupDetailPage} />
+
           <Route exact path="/friends">
             <Tab2 />
           </Route>
+
           <Route path="/activity">
             <Tab3 />
           </Route>
@@ -60,26 +68,26 @@ const App: React.FC = () => (
             <Tab4 />
           </Route>
           <Route exact path="/">
-            <Redirect to="/groups" />
+            <Redirect to="/login" />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/groups">
             <IonIcon aria-hidden="true" icon={peopleSharp} />
-            <IonLabel>Groups</IonLabel>
+            <IonLabel>Gruplar</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/friends">
             <IonIcon aria-hidden="true" icon={person} />
             {/* icon üstü yazı */}
-            <IonLabel>Friends</IonLabel>
+            <IonLabel>Arkadaşlar</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab3" href="/activity">
             <IonIcon aria-hidden="true" icon={receipt} />
-            <IonLabel>Activity</IonLabel>
+            <IonLabel>Detaylar</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab4" href="/account">
             <IonIcon aria-hidden="true" icon={personCircleSharp} />
-            <IonLabel>Account</IonLabel>
+            <IonLabel>Hesabım</IonLabel>
           </IonTabButton>
 
         </IonTabBar>

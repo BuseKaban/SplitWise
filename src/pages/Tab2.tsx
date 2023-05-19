@@ -21,7 +21,7 @@ const Tab2: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Friends</IonTitle>
+          <IonTitle>Arkadaşlarım</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -32,7 +32,7 @@ const Tab2: React.FC = () => {
         </IonHeader>
         <IonList>
           {friends.map((friend) =>
-            <IonItem>
+            <IonItem key={friend.id}>
               <IonAvatar slot="start">
                 <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
               </IonAvatar>

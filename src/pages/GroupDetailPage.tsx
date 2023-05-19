@@ -4,6 +4,9 @@ import { RouteComponentProps, useHistory, useLocation } from 'react-router';
 import { GetTransactions, GroupSummary, Transaction } from '../utils/Users';
 import TransactionListItem from '../components/TransactionListItem/TransactionListItem';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
+import TransactionModal from '../components/Modal/TransactionModal';
+
+import "./GroupDetailPage.scss"
 
 
 interface GroupDetailPageProps
@@ -28,12 +31,18 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
+          <IonButtons slot='start'>
             <IonBackButton defaultHref="#"></IonBackButton>
           </IonButtons>
-          <GroupListItem
-            imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'} groupName={history.location.state?.GroupName} totalOwe={history.location.state?.SummaryAmount} details={history.location.state?.Details}></GroupListItem>
         </IonToolbar>
+        <GroupListItem
+          className='group-summary-header'
+          lines='none'
+          imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'}
+          groupName={history.location.state?.GroupName}
+          totalOwe={history.location.state?.SummaryAmount}
+          details={history.location.state?.Details}
+        ></GroupListItem>
       </IonHeader>
       <IonContent className="ion-padding">
 
@@ -54,6 +63,7 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
             )
           }
         </IonList>
+        <TransactionModal></TransactionModal>
 
       </IonContent>
     </IonPage>

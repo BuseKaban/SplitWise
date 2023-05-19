@@ -6,6 +6,8 @@ import { useHistory } from 'react-router';
 
 interface ContainerProps {
     imagePath: string;
+    lines?: "full" | "inset" | "none";
+    className?: string;
     groupName: string;
     totalOwe: number;
     details: Map<string, number>;
@@ -37,7 +39,7 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
     }
 
     return (
-        <IonItem onClick={props.onClickItem} button>
+        <IonItem className={props.className} lines={props.lines ?? "full"} onClick={props.onClickItem} button>
             <IonAvatar slot="start">
                 <img alt="Group Icon" src={props.imagePath} />
             </IonAvatar>

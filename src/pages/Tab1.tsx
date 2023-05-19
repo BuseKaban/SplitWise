@@ -46,10 +46,8 @@ const Tab1: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>My Groups</IonTitle>
-        </IonToolbar>
-        <IonToolbar>
-          <IonSearchbar mode='ios' onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
+          <IonTitle>Gruplarım</IonTitle>
+          <IonSearchbar placeholder='Gruplarını ara' mode='ios' onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -64,6 +62,7 @@ const Tab1: React.FC = () => {
               results.map(groupSummary =>
                 <IonReorder key={groupSummary.GroupID}>
                   <GroupListItem
+
                     onClickItem={() => { navToDetail(groupSummary) }}
                     imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'}
                     groupName={groupSummary.GroupName}
