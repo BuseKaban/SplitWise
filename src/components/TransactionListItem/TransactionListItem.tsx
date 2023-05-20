@@ -6,12 +6,12 @@ import { amountFormatter, getUserNameById } from '../../utils/Utils';
 import { cashOutline, logoIonic } from 'ionicons/icons';
 
 interface ContainerProps {
-    imagePath: string;
     transactionName: string;
     oweAmount: number;
     date: Date;
     transactionOwnerID: string;
     totalAmount: number;
+    routerLink?: string;
 }
 
 const TransactionListItem: React.FC<ContainerProps> = (props) => {
@@ -24,16 +24,16 @@ const TransactionListItem: React.FC<ContainerProps> = (props) => {
     }
 
     function getDetail() {
+        if (props.oweAmount == 0) return;
 
         if (props.transactionOwnerID == currentUser.id)
             return <IonRow className='text-size'> <IonText color="success">&nbsp;{amountFormatter(props.oweAmount)}&nbsp;</IonText> alacaklısın</IonRow>
         else
             return <IonRow className='text-size'> <IonText color="danger">&nbsp;{amountFormatter(props.oweAmount)}&nbsp;</IonText> borçlusun</IonRow>
-
     }
 
     return (
-        <IonItem button style={{ "--padding-start": "0px" }}>
+        <IonItem button style={{ "--padding-start": "0px" }} routerLink={props.routerLink}>
             <IonIcon className='bg-green-100 p-3 rounded-full mr-4' slot='start' icon={cashOutline} size="large" color="primary"></IonIcon>
 
             <IonGrid>

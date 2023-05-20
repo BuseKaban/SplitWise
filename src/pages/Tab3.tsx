@@ -1,32 +1,27 @@
-import { IonAvatar, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
+import { IonAvatar, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { useEffect, useState } from 'react';
-import { GetGroupsKeys, GetTransactions, Transaction, currentUser } from '../utils/Users';
+import { GetAllTransactions, GetGroupsKeys, GetTransactions, Transaction, currentUser } from '../utils/Users';
 import { amountFormatter, getUserNameById } from '../utils/Utils';
-import { format } from 'date-fns';
+import { format, set } from 'date-fns';
 import "./Tab3.scss";
+import { peopleOutline } from 'ionicons/icons';
+import { DownloadImage } from '../utils/Users';
 
 const Tab3: React.FC = () => {
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [photos, setGroupPhotos] = useState<{ key: string, dataUrl: string }[]>([]);
   const currentYear = new Date().getUTCFullYear();
 
   useEffect(() => {
-    GetGroupsKeys().then((groupKeys) => {
-      groupKeys.forEach((groupKey) => {
+    GetAllTransactions().then(results => {
 
-        const transactionPromiseList = [];
-        transactionPromiseList.push(GetTransactions(groupKey));
+      const groupKeys = new Set(results.map(t => t.groupID));
 
-        const transactionList = [] as Transaction[]
-        Promise.all(transactionPromiseList).then(transactionResult => {
+      groupKeys.forEach(key => DownloadImage(key).then((value) => value ? setGroupPhotos([...photos, { key: key, dataUrl: value }]) : null))
 
-          transactionResult.forEach(result => transactionList.push(...result));
-
-          transactionList.sort((transactionA, transactionB) => { return transactionA.date < transactionB.date ? 1 : -1 })
-          setTransactions(transactionList);
-        })
-      })
+      const sortedList = results.sort((transactionA, transactionB) => { return transactionA.date < transactionB.date ? 1 : -1 })
+      setTransactions(sortedList);
     })
   }, [])
 
@@ -61,10 +56,14 @@ const Tab3: React.FC = () => {
         </IonHeader>
         <IonList>
           {transactions.map(transaction =>
-            <IonItem key={transaction.id} className={transaction.owner == currentUser.id ? "owner" : "nonowner"}>
-              <IonAvatar slot="start">
-                <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-              </IonAvatar>
+            <IonItem key={transaction.id} className={transaction.owner == currentUser.id ? "owner" : "nonowner"} routerLink={"/groups/detail/" + transaction.groupID}>
+              {photos.find(photo => photo.key == transaction.groupID) ?
+                <IonAvatar slot="start" className='group-list-item-avatar'>
+                  <img alt="Group Icon" src={photos.find(photo => photo.key == transaction.groupID)?.dataUrl} />
+                </IonAvatar>
+                :
+                <IonIcon className='bg-green-100 p-3 rounded-2xl mr-4 group-list-item-avatar' slot='start' icon={peopleOutline} color="primary"></IonIcon>
+              }
               <IonLabel>
                 <h3>{isOwner(transaction.owner) ? "Sen" : getUserNameById(transaction.owner)} / {transaction.groupName}</h3>
                 <p className='amount'>{amountFormatter(transaction.amount)} ödendi</p>

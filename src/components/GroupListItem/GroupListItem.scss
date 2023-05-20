@@ -10,12 +10,30 @@
 
 .text-size {
     padding-inline-start: 12px;
-    padding-top: 4px;    
-    font-size: 12px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 0.8rem;
+
 }
 
-.title-text{
-    // font-family:cursive;
+.title-text {
+    padding-top: 4px;
     padding-bottom: 4px;
+    font-size: 1.1rem;
 }
 
+.group-list-item {
+    min-height: 78px;
+    --inner-padding-end: 0px;
+    --padding-start: 0px;
+}
+
+.no-owe {
+    color: rgb(179, 179, 179);
+    font-style: italic;
+}
+
+.group-list-item-avatar {
+    width: 48px;
+    height: 48px;
+}

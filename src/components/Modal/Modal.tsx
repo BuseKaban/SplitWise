@@ -3,9 +3,10 @@ import { addOutline, close } from 'ionicons/icons';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { UserPhoto } from '../../hooks/PhotoGallery';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
 
-import { AddGroup, Friend, GetFriends } from '../../utils/Users';
+import { AddGroup, Friend, GetFriends, UploadImage } from '../../utils/Users';
+import { Encoding, Filesystem } from '@capacitor/filesystem';
 
 
 const Modal: React.FC = () => {
@@ -13,7 +14,7 @@ const Modal: React.FC = () => {
 
   const takePhoto = async () => {
     const photo = await Camera.getPhoto({
-      resultType: CameraResultType.Uri,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera,
       quality: 100,
     });
@@ -21,8 +22,10 @@ const Modal: React.FC = () => {
     const fileName = new Date().getTime() + ".jpeg";
     const newPhoto = {
       filepath: fileName,
-      webviewPath: photo.webPath
+      webviewPath: photo.webPath,
+      base64String: photo.dataUrl
     }
+
     setPhoto(newPhoto);
   };
   const [filterText, setFilterText] = useState("");
@@ -66,13 +69,11 @@ const Modal: React.FC = () => {
 
   function CreateGroup(): void {
     if (groupName.length > 0 && selectedFriends.length > 0) {
-      //create group
-      AddGroup(groupName, selectedFriends);
-
+      AddGroup(groupName, selectedFriends, photo!);
       modal.current?.dismiss();
     }
     else {
-
+      // TODO: UYARI GÖSTER
     }
   }
 
@@ -88,7 +89,7 @@ const Modal: React.FC = () => {
         <div className="ion-padding pt-8 flex flex-col h-4/5 justify-start items-center">
 
           <IonItem className='w-28 h-28' onClick={takePhoto} >
-            <IonImg className='w-28 h-28' src={photo?.webviewPath ?? "https://ionicframework.com/docs/img/demos/avatar.svg"} />
+            <IonImg className='w-28 h-28' src={photo?.base64String ?? "https://ionicframework.com/docs/img/demos/avatar.svg"} />
           </IonItem>
           <IonInput
             id="groupname"

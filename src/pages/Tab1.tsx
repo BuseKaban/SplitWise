@@ -1,11 +1,10 @@
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonList, IonPage, IonReorder, IonReorderGroup, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
+import { IonContent, IonHeader, IonList, IonPage, IonReorder, IonReorderGroup, IonSearchbar, IonTitle, IonToolbar, ItemReorderEventDetail, SearchbarInputEventDetail } from '@ionic/react';
 import './Tab1.css';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import { IonSearchbarCustomEvent } from '@ionic/core';
 import { useEffect, useState } from 'react';
-import { GetAllSummaries, GetSummary, GroupSummary, onGroupsChanged } from '../utils/Users';
+import { GetAllSummaries, GroupSummary, onGroupsChanged } from '../utils/Users';
 import { useHistory } from 'react-router';
-import { addOutline, chevronUpCircle } from 'ionicons/icons';
 import Modal from '../components/Modal/Modal';
 
 
@@ -15,7 +14,8 @@ const Tab1: React.FC = () => {
 
     onGroupsChanged(() =>
       GetAllSummaries().then((result) => {
-        setResults(result);
+        setOriginalSummaries(result)
+        setSummaries(result);
       }))
   }, []);
 
@@ -23,60 +23,55 @@ const Tab1: React.FC = () => {
   const history = useHistory();
 
   let groupSummaries = [
-
   ] as GroupSummary[]
 
-  let [results, setResults] = useState(groupSummaries);
+
+  const [originalSummaries, setOriginalSummaries] = useState(groupSummaries);
+
+  const [summaries, setSummaries] = useState(groupSummaries);
 
   function handleSearch(ev: IonSearchbarCustomEvent<SearchbarInputEventDetail>): void {
-    setResults(groupSummaries.filter(group => group.GroupName.toLowerCase().includes(ev.target.value!.toLowerCase())));
+    setSummaries(originalSummaries.filter(group => group.GroupName.toLowerCase().includes(ev.target.value!.toLowerCase())));
   }
 
 
-  function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
-    console.log('Dragged from index', event.detail.from, 'to', event.detail.to);
-    event.detail.complete();
-  }
 
 
   function navToDetail(group: GroupSummary) {
     history.push("/groups/detail/" + group.GroupID, group);
   }
+
   return (
-    <IonPage>
+    <IonPage className='tab1'>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Gruplarım</IonTitle>
-          <IonSearchbar placeholder='Gruplarını ara' mode='ios' onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
+          <IonTitle className='mt-[13px]'>Gruplarım</IonTitle>
+          <IonSearchbar className='mt-3  search-bar' placeholder='Gruplarını ara' mode='ios' onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen className='ion-padding'>
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonSearchbar onIonInput={(ev) => handleSearch(ev)}></IonSearchbar>
           </IonToolbar>
         </IonHeader>
-        <IonList>
-          <IonReorderGroup disabled={true} onIonItemReorder={handleReorder}>
-            {
-              results.map(groupSummary =>
-                <IonReorder key={groupSummary.GroupID}>
-                  <GroupListItem
-
-                    onClickItem={() => { navToDetail(groupSummary) }}
-                    imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'}
-                    groupName={groupSummary.GroupName}
-                    totalOwe={groupSummary.SummaryAmount}
-                    details={groupSummary.Details} />
-                </IonReorder>
-              )
-            }
-          </IonReorderGroup>
+        <IonList className='ion-no-padding'>
+          {
+            summaries.map(groupSummary =>
+              <GroupListItem
+                key={groupSummary.GroupID}
+                onClickItem={() => { navToDetail(groupSummary) }}
+                groupName={groupSummary.GroupName}
+                totalOwe={groupSummary.SummaryAmount}
+                details={groupSummary.Details}
+                imagePath={groupSummary.Base64Image} />
+            )
+          }
         </IonList>
 
         <Modal></Modal>
       </IonContent>
-    </IonPage>
+    </IonPage >
   );
 };
 

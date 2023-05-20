@@ -1,7 +1,7 @@
 import { IonBackButton, IonButtons, IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
-import { RouteComponentProps, useHistory, useLocation } from 'react-router';
-import { GetSummary, GetTransactions, GroupSummary, Transaction } from '../utils/Users';
+import { RouteComponentProps } from 'react-router';
+import { GetSummary, GetTransactions, GroupSummary, Transaction, currentUser } from '../utils/Users';
 import TransactionListItem from '../components/TransactionListItem/TransactionListItem';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import TransactionModal from '../components/Modal/TransactionModal';
@@ -31,6 +31,17 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
   }, []);
 
 
+  function getOweAmount(transaction: Transaction): number {
+
+    if (transaction.owner == currentUser.id) {
+      return transaction.amount / transaction.splitters.length * (transaction.splitters.length - 1);
+    } else if (transaction.splitters.find(user => user == currentUser.id)) {
+      return transaction.amount / transaction.splitters.length;
+    } else {
+      return 0;
+    }
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -46,6 +57,7 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
           groupName={summary?.GroupName}
           totalOwe={summary?.SummaryAmount}
           details={summary?.Details}
+          imagePath={summary?.Base64Image}
         ></GroupListItem>
       </IonHeader>
       <IonContent className="ion-padding">
@@ -54,17 +66,16 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
           {
             results.map(transaction =>
               <TransactionListItem key={transaction.id}
-                //routerLink={"/groups/detail/" + transaction.GroupID}
+                // routerLink={"/groups/detail/" + transaction.groupID}
                 date={transaction.date}
-                imagePath={'https://ionicframework.com/docs/img/demos/avatar.svg'}
                 transactionName={transaction.name}
                 totalAmount={transaction.amount}
-                oweAmount={transaction.amount / transaction.splitters.length}
+                oweAmount={getOweAmount(transaction)}
                 transactionOwnerID={transaction.owner} />
             )
           }
         </IonList>
-        <TransactionModal></TransactionModal>
+        <TransactionModal groupId={match.params.id}></TransactionModal>
 
       </IonContent>
     </IonPage>

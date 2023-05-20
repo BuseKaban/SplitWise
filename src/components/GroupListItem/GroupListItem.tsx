@@ -16,8 +16,8 @@ interface ContainerProps {
 
 const GroupListItem: React.FC<ContainerProps> = (props) => {
     function summaryTitle(totalOwe: number | undefined) {
-        if (!totalOwe)
-            return null
+        if (!totalOwe || totalOwe == 0)
+            return <IonRow className='no-owe '>Borç yok</IonRow>;
 
         if (totalOwe > 0)
             return <IonLabel color='success'>{amountFormatter(totalOwe)} alacaklısın</IonLabel>;
@@ -29,7 +29,7 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
 
     function showDetails() {
         if (props.totalOwe == 0 || !props.details)
-            return "Borç yok";
+            return null
 
         return Array.from(props.details).map(([key, value]) => {
             if (value > 0)
@@ -40,7 +40,7 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
     }
 
     return (
-        <IonItem className={props.className} lines={props.lines ?? "full"} onClick={props.onClickItem} button={props.onClickItem != undefined}>
+        <IonItem className={props.className + " group-list-item"} lines={props.lines ?? "full"} onClick={props.onClickItem} button={props.onClickItem != undefined}>
             {props.imagePath ?
                 <IonAvatar slot="start" className='group-list-item-avatar'>
                     <img alt="Group Icon" src={props.imagePath} />

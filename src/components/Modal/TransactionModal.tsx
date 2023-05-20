@@ -1,20 +1,24 @@
-import { IonItem, IonContent, IonImg, IonList, IonModal, IonSearchbar, IonFab, IonFabButton, IonIcon, IonButton, IonInput, IonFooter, IonLabel, IonSelect, IonSelectOption } from '@ionic/react';
+import { IonItem, IonList, IonModal, IonSearchbar, IonFab, IonFabButton, IonIcon, IonButton, IonInput, IonLabel, IonSelect, IonSelectOption, IonDatetime, IonDatetimeButton } from '@ionic/react';
 import { addOutline, close } from 'ionicons/icons';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { UserPhoto } from '../../hooks/PhotoGallery';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { useEffect, useRef, useState } from 'react';
 
-import { AddGroup, Friend, GetFriends } from '../../utils/Users';
+import { AddTransaction, Friend, GetFriends, GetGroupUsers, GetTransactionTypes, Transaction } from '../../utils/Users';
 
 import './TransactionModal.scss';
 import { amountFormatter } from '../../utils/Utils';
+import { currentUser } from '../../utils/Users';
 
-const TransactionModal: React.FC = () => {
+interface TransactionModalInputs {
+  groupId: string,
+}
 
+const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
   const [filterText, setFilterText] = useState("");
   const [transactionName, setTransactionName] = useState("");
   const [transactionAmount, setTransactionAmount] = useState(0);
+  const [transactionType, setTransactionType] = useState("");
+  const [transactionDate, setTransactionDate] = useState(new Date());
 
   const modal = useRef<HTMLIonModalElement>(null);
 
@@ -22,12 +26,8 @@ const TransactionModal: React.FC = () => {
   const [allFriends, setAllFriends] = useState([] as Friend[]);
   const [selectedFriends, setSelectedFriends] = useState([] as Friend[]);
 
-  const options = {
-    cssClass: 'my-custom-interface',
-  }
-
   useEffect(() => {
-    GetFriends().then((friends) => {
+    GetGroupUsers(props.groupId).then((friends) => {
       setAllFriends(friends)
       setFilteredFriends(friends)
     }
@@ -54,16 +54,18 @@ const TransactionModal: React.FC = () => {
     setAllFriends([eventFriend, ...allFriends])
   }
 
-  function CreateGroup(): void {
-    // if (groupName.length > 0 && selectedFriends.length > 0) {
-    //   //create group
-    //   AddGroup(groupName, selectedFriends);
 
-    //   modal.current?.dismiss();
-    // }
-    // else {
-    //   //uyarı ver
-    // }
+
+  function CreateTransaction() {
+    AddTransaction({
+      amount: transactionAmount,
+      date: transactionDate,
+      name: transactionName,
+      owner: currentUser.id,
+      splitters: [currentUser.id, ...selectedFriends.map(f => f.id)],
+      type: transactionType,
+      groupID: props.groupId
+    } as Transaction);
   }
 
   return (
@@ -76,7 +78,7 @@ const TransactionModal: React.FC = () => {
       </IonFab>
       <IonModal className='modal' ref={modal} trigger="open-transaction-modal" initialBreakpoint={0.80} breakpoints={[0, 0.80]}>
         <div className="ion-padding pt-8 flex flex-col h-4/5 justify-start items-center">
-          <IonList className='w-52'>
+          <IonList className='w-72'>
             <IonItem>
               <IonInput
                 id="transactionname"
@@ -84,18 +86,14 @@ const TransactionModal: React.FC = () => {
                 placeholder="İsim girin"
                 color="primary"
                 className='text-right'
-                onIonChange={(e) => setTransactionAmount((e.detail.value ?? 0) as number)}
+                onIonChange={(e) => setTransactionName((e.detail.value ?? ""))}
               ></IonInput>
             </IonItem>
             <IonItem mode='ios'>
-              <IonSelect label="Tür :" placeholder='Tür seçin' interface='action-sheet'>
-                <IonSelectOption value="fatura">Fatura</IonSelectOption>
-                <IonSelectOption value="kira">Kira</IonSelectOption>
-                <IonSelectOption value="market">Market</IonSelectOption>
-                <IonSelectOption value="saglik">Sağlık</IonSelectOption>
-                <IonSelectOption value="egitim">Eğitim</IonSelectOption>
-                <IonSelectOption value="ulasim">Ulaşım</IonSelectOption>
-                <IonSelectOption value="diger">Diğer</IonSelectOption>
+              <IonSelect label="Tür :" placeholder='Tür seçin' interface='action-sheet' onIonChange={(e) => setTransactionType(e.detail.value ?? "")}>
+                {GetTransactionTypes().map(type =>
+                  <IonSelectOption key={type} value={type}>{type}</IonSelectOption>
+                )}
               </IonSelect>
             </IonItem>
             <IonItem>
@@ -109,16 +107,17 @@ const TransactionModal: React.FC = () => {
                 onIonChange={(e) => setTransactionAmount((e.detail.value ?? 0) as number)}
               ></IonInput>
             </IonItem>
+            <IonItem>
+              <IonLabel>Tarih: </IonLabel>
+              <IonDatetimeButton mode='ios' datetime="datetime" ></IonDatetimeButton>
+              <IonModal keepContentsMounted={true}>
+                <IonDatetime mode='ios' onSelect={(e) => setTransactionDate(new Date(e.timeStamp))} presentation='date-time' id='datetime'></IonDatetime>
+              </IonModal>
+            </IonItem>
           </IonList>
 
-
-
-
-
-
-
           <IonSearchbar
-            className='ion-no-padding ion-no-border pb-4'
+            className='ion-no-padding ion-no-border pb-4 pt-4'
             showClearButton="focus"
             onIonInput={(ev) => setFilterText(ev.detail.value?.toLowerCase() ?? '')}
 
@@ -150,7 +149,7 @@ const TransactionModal: React.FC = () => {
 
           <div className='w-full h-14 flex flex-row justify-between mt-auto' >
             <IonButton className='w-1/2 h-12 ' fill='clear' color="danger" onClick={(e) => modal.current?.dismiss()} >İptal Et</IonButton>
-            <IonButton className='w-1/2 h-12 ' color="primary" onClick={() => CreateGroup()}>Oluştur</IonButton>
+            <IonButton className='w-1/2 h-12 ' color="primary" onClick={() => { CreateTransaction(); modal.current?.dismiss(); }}>Oluştur</IonButton>
           </div>
         </div>
 

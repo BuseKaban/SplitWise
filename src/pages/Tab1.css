@@ -1,6 +1,15 @@
-ion-col {
-    background-color: #7fb89d;
-    border: solid 1px #fff;
-    color: #fff;
-    text-align: center;
+/* ion-col {
+  background-color: #7fb89d;
+  border: solid 1px #fff;
+  color: #fff;
+  text-align: center;
+} */
+
+.tab1 {
+  .search-bar {
+    color: white;
+
+    --icon-color: white;
+    --clear-button-color: rgb(218, 218, 218);
   }
+}
