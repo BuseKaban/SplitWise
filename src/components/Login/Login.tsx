@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { IonAlert, IonButton, IonIcon, IonInput, IonItem, useIonAlert } from '@ionic/react';
+import { IonAlert, IonButton, IonIcon, IonInput, IonItem, IonText, useIonAlert } from '@ionic/react';
 import { setCurrentUser, users } from '../../utils/Users';
 import { useHistory } from 'react-router';
 import "./Login.scss"
@@ -36,7 +36,11 @@ const Login: React.FC = () => {
 
     return (
         <>
-            <form className='login-form ion-padding' id='login' onSubmit={handleSubmit}>
+            <form className='login-form ion-padding mb-16' id='login' onSubmit={handleSubmit}>
+                <div className='relative text-center mb-6'>
+                    <IonIcon className='w-full h-64' src='assets/icon/logo.svg'></IonIcon>
+                    <p className='logo absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>SplitPay</p>
+                </div>
                 <IonItem lines='none' className='login-input-item'>
                     <IonIcon className='mr-2' slot='start' icon={person}></IonIcon>
                     <IonInput
@@ -44,7 +48,7 @@ const Login: React.FC = () => {
                         onIonInput={(e) => { setUsername(e.detail.value!) }}
                         id='username'
                         name='username'
-                        placeholder="Username"
+                        placeholder="Kullanıcı Adı"
                     ></IonInput>
                 </IonItem>
 
@@ -55,14 +59,14 @@ const Login: React.FC = () => {
                         onIonInput={(e) => { setpassword(e.detail.value!) }}
                         id='password'
                         name='password'
-                        placeholder="Password"
+                        placeholder="Şifre"
                         type='password'
                     ></IonInput>
                 </IonItem>
 
                 <div className='flex justify-center mt-6'>
                     <IonButton shape='round' className='h-14 w-3/4' form={"login"} type='submit'>
-                        Login
+                        Giriş
                     </IonButton>
                 </div>
             </form>

@@ -42,11 +42,11 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
     return (
         <IonItem className={props.className + " group-list-item"} lines={props.lines ?? "full"} onClick={props.onClickItem} button={props.onClickItem != undefined}>
             {props.imagePath ?
-                <IonAvatar slot="start" className='bg-green-100 mr-0 group-list-item-avatar'>
+                <IonAvatar slot="start" className=' mr-0 group-list-item-avatar'>
                     <IonImg alt="Group Icon" src={props.imagePath} />
                 </IonAvatar>
                 :
-                <IonIcon className=' bg-green-100 p-3 rounded-2xl mr-0 group-list-item-icon' slot='start' icon={peopleOutline} color="primary"></IonIcon>
+                <IonIcon className='  p-3 rounded-2xl mr-0 group-list-item-icon' slot='start' icon={peopleOutline} color="primary"></IonIcon>
             }
             <IonGrid className='ml-4 group-list-item-grid pl-0'>
                 <IonRow className='group-list-item-text title-text'>{props.groupName}</IonRow>

@@ -37,10 +37,12 @@
     width: 72px;
     height: 72px;
     --border-radius: 1rem;
+    background: var(--ion-color-primary-tint, #97ff89);
 }
 
 
 .group-list-item-icon {
     width: 48px;
     height: 48px;
+    background: var(--ion-color-primary-tint, #97ff89);
 }

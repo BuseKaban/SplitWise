@@ -57,6 +57,7 @@ const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
 
 
   function CreateTransaction() {
+    console.log(transactionDate)
     AddTransaction({
       amount: transactionAmount,
       date: transactionDate,
@@ -111,7 +112,7 @@ const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
               <IonLabel>Tarih: </IonLabel>
               <IonDatetimeButton mode='ios' datetime="datetime" ></IonDatetimeButton>
               <IonModal keepContentsMounted={true}>
-                <IonDatetime mode='ios' onSelect={(e) => setTransactionDate(new Date(e.timeStamp))} presentation='date-time' id='datetime'></IonDatetime>
+                <IonDatetime onIonChange={(e) => setTransactionDate(new Date(e.detail!.value as string))} mode='ios' presentation='date-time' id='datetime'></IonDatetime>
               </IonModal>
             </IonItem>
           </IonList>

@@ -1,9 +1,8 @@
-import { DocumentSnapshot, Firestore, Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
+import { DocumentSnapshot, Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { firestore, storage } from "../firebase";
 import { getUserNameById } from "./Utils";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { UserPhoto } from "../hooks/PhotoGallery";
-import { Photo } from "@capacitor/camera";
 import { FirebaseError } from "firebase/app";
 
 interface User {
@@ -258,7 +257,8 @@ export const GetAllSummaries = () => {
 
 export const AddTransaction = (transaction: Transaction) => {
     const groupColRef = collection(firestore, "transactions");
-    addDoc(groupColRef, transaction).then(addedTransction => {
+
+    addDoc(groupColRef, { ...transaction, test: Timestamp.fromDate(transaction.date) }).then(addedTransction => {
         const groupDocRef = doc(firestore, "groups", transaction.groupID)
         getDoc(groupDocRef).then(groupData => {
             const transactions = groupData.get("transactions") as string[];
