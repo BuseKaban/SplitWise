@@ -3,7 +3,7 @@ import './Tab1.css';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import { IonSearchbarCustomEvent } from '@ionic/core';
 import { useEffect, useState } from 'react';
-import { GetAllSummaries, GroupSummary, onGroupsChanged } from '../utils/Users';
+import { GetAllSummaries, GroupSummary, onCurrentUserGroupListChanged, onGroupsChanged } from '../utils/Users';
 import { useHistory } from 'react-router';
 import Modal from '../components/Modal/Modal';
 
@@ -11,12 +11,19 @@ import Modal from '../components/Modal/Modal';
 //burdayız
 const Tab1: React.FC = () => {
   useEffect(() => {
-
-    onGroupsChanged(() =>
+    onGroupsChanged(() => {
       GetAllSummaries().then((result) => {
         setOriginalSummaries(result)
         setSummaries(result);
-      }))
+      })
+    });
+
+    onCurrentUserGroupListChanged(() => {
+      GetAllSummaries().then((result) => {
+        setOriginalSummaries(result)
+        setSummaries(result);
+      })
+    });
   }, []);
 
 

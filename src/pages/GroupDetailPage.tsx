@@ -1,7 +1,7 @@
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar, useIonAlert } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-import { GetSummary, GetTransactions, GroupSummary, Transaction, currentUser } from '../utils/Users';
+import { GetSummary, GetTransactions, GroupSummary, RemoveTransaction, Transaction, currentUser, onGroupsChanged } from '../utils/Users';
 import TransactionListItem from '../components/TransactionListItem/TransactionListItem';
 import GroupListItem from '../components/GroupListItem/GroupListItem';
 import TransactionModal from '../components/Modal/TransactionModal';
@@ -21,17 +21,35 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
   const [summary, setSummary] = useState<GroupSummary>()
 
   useEffect(() => {
-    GetSummary(match.params.id).then((result) => {
-      setSummary(result);
-    })
+    onGroupsChanged(() => {
+      GetSummary(match.params.id).then((result) => {
+        setSummary(result);
+      })
 
-    GetTransactions(match.params.id).then((result) => {
-      setResults(result);
+      GetTransactions(match.params.id).then((result) => {
+        setResults(result);
+      })
     })
-
 
   }, []);
 
+  const [presentAlert] = useIonAlert();
+
+  function confirmDeletion(transaction: Transaction): void {
+    presentAlert({
+      mode: "ios",
+      header: 'Ödemeyi Temizle',
+      message: 'Bu ödemeyi bölüştüyseniz veya ödeme yanlış bilgiler içeriyorsa ödemeyi temizleyin.',
+      buttons: [
+        {
+          id: "test2",
+          text: "Temizle",
+          role: "destructive",
+          handler: () => RemoveTransaction(transaction)
+        },
+      ],
+    })
+  }
 
   function getOweAmount(transaction: Transaction): number {
 
@@ -70,12 +88,13 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
               {
                 results.map(transaction =>
                   <TransactionListItem key={transaction.id}
-                    // routerLink={"/groups/detail/" + transaction.groupID}
                     date={transaction.date}
                     transactionName={transaction.name}
                     totalAmount={transaction.amount}
                     oweAmount={getOweAmount(transaction)}
-                    transactionOwnerID={transaction.owner} />
+                    transactionOwnerID={transaction.owner}
+                    onClick={() => confirmDeletion(transaction)}
+                  />
                 )
               }
             </IonList>

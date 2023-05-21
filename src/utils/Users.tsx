@@ -1,4 +1,4 @@
-import { DocumentSnapshot, Firestore, Timestamp, addDoc, collection, doc, getDoc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
+import { DocumentSnapshot, Firestore, Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { firestore, storage } from "../firebase";
 import { getUserNameById } from "./Utils";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
@@ -221,26 +221,33 @@ export const AddGroup = (groupName: string, friends: Friend[], photo: UserPhoto)
                 updateDoc(userDocRef, { "groups": [...groups, groupData.id] });
             });
         })
-        if (photo.base64String)
+        if (photo?.base64String)
             UploadImage(photo.base64String, groupData.id)
 
     })
 
 }
 
-export const onGroupsChanged = (handler: any) => {
+export const onCurrentUserGroupListChanged = (handler: any) => {
     onSnapshot(doc(firestore, "users", currentUser!.id), { includeMetadataChanges: true }, (doc) => {
         if (doc.metadata.hasPendingWrites) return
         handler()
     })
+}
 
+export const onGroupsChanged = (handler: any) => {
+    const groupsColRef = collection(firestore, "groups");
+    const userGroupsQuery = query(groupsColRef, where("users", "array-contains", currentUser!.id));
+
+    onSnapshot(userGroupsQuery, { includeMetadataChanges: true }, (changes) => {
+        if (changes.metadata.hasPendingWrites) return
+        handler();
+    })
 }
 
 
 export const GetAllSummaries = () => {
-
     return new Promise<GroupSummary[]>((resolve, reject) => {
-
         GetGroupsKeys().then(keys => {
             const allSummaryPromiseList: Promise<GroupSummary>[] = [];
             keys.forEach(anahtar => allSummaryPromiseList.push(GetSummary(anahtar)));
@@ -260,6 +267,17 @@ export const AddTransaction = (transaction: Transaction) => {
     });
 }
 
+export const RemoveTransaction = (transaction: Transaction) => {
+    const transactionDocRef = doc(firestore, "transactions", transaction.id);
+    const groupDocRef = doc(firestore, "groups", transaction.groupID);
+
+    getDoc(groupDocRef).then((groupData) => {
+        const transactions = groupData.get("transactions") as string[];
+        updateDoc(groupDocRef, { transactions: transactions.filter(t => t != transaction.id) }).then(
+            () => deleteDoc(transactionDocRef)
+        );
+    });
+}
 
 export const GetTransactionTypes = () => {
     return ["Fatura", "Kira", "Market", "Sağlık", "Eğitim", "Ulaşım", "Diğer"];
@@ -278,7 +296,7 @@ export const GetAllTransactions = () => {
             groupsSnapshot.forEach(groupData => {
                 groups.set(groupData.id, groupData.get("name"))
             });
-            console.log(groups);
+
             const transactionList: Transaction[] = []
             getDocs(userTransactionsQuery).then(transactionsSnapshot => {
                 transactionsSnapshot.forEach(transactionData => transactionList.push(

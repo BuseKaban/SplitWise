@@ -62,7 +62,8 @@ const Login: React.FC = () => {
 
                 <div className='flex justify-center mt-6'>
                     <IonButton shape='round' className='h-14 w-3/4' form={"login"} type='submit'>
-                        Login</IonButton>
+                        Login
+                    </IonButton>
                 </div>
             </form>
 

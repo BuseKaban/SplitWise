@@ -3,7 +3,7 @@ import { addOutline, close } from 'ionicons/icons';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { AddTransaction, Friend, GetFriends, GetGroupUsers, GetTransactionTypes, Transaction } from '../../utils/Users';
+import { AddTransaction, Friend, GetGroupUsers, GetTransactionTypes, Transaction } from '../../utils/Users';
 
 import './TransactionModal.scss';
 import { amountFormatter } from '../../utils/Utils';
@@ -72,7 +72,7 @@ const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
 
     <>
       <IonFab slot="fixed" vertical="bottom" horizontal="end">
-        <IonFabButton id="open-transaction-modal" color={"primary"}>
+        <IonFabButton id="open-transaction-modal" color="primary">
           <IonIcon icon={addOutline}></IonIcon>
         </IonFabButton>
       </IonFab>

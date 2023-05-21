@@ -1,6 +1,6 @@
 import { IonAvatar, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { useEffect, useState } from 'react';
-import { GetAllTransactions, GetGroupsKeys, GetTransactions, Transaction, currentUser } from '../utils/Users';
+import { GetAllTransactions, GetGroupsKeys, GetTransactions, Transaction, currentUser, onGroupsChanged } from '../utils/Users';
 import { amountFormatter, getUserNameById } from '../utils/Utils';
 import { format, set } from 'date-fns';
 import "./Tab3.scss";
@@ -14,14 +14,16 @@ const Tab3: React.FC = () => {
   const currentYear = new Date().getUTCFullYear();
 
   useEffect(() => {
-    GetAllTransactions().then(results => {
+    onGroupsChanged(() => {
+      GetAllTransactions().then(results => {
 
-      const groupKeys = new Set(results.map(t => t.groupID));
+        const groupKeys = new Set(results.map(t => t.groupID));
 
-      groupKeys.forEach(key => DownloadImage(key).then((value) => value ? setGroupPhotos([...photos, { key: key, dataUrl: value }]) : null))
+        groupKeys.forEach(key => DownloadImage(key).then((value) => value ? setGroupPhotos([...photos, { key: key, dataUrl: value }]) : null))
 
-      const sortedList = results.sort((transactionA, transactionB) => { return transactionA.date < transactionB.date ? 1 : -1 })
-      setTransactions(sortedList);
+        const sortedList = results.sort((transactionA, transactionB) => { return transactionA.date < transactionB.date ? 1 : -1 })
+        setTransactions(sortedList);
+      })
     })
   }, [])
 

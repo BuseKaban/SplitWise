@@ -2,7 +2,7 @@ import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText, IonIcon, IonImg
 import './GroupListItem.scss'
 import { users } from '../../utils/Users';
 import { amountFormatter } from '../../utils/Utils';
-import { cashOutline, peopleCircleOutline, peopleOutline } from 'ionicons/icons';
+import { peopleOutline } from 'ionicons/icons';
 
 interface ContainerProps {
     imagePath?: string;
