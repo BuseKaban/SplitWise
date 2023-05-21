@@ -4,6 +4,7 @@ import { getUserNameById } from "./Utils";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { UserPhoto } from "../hooks/PhotoGallery";
 import { Photo } from "@capacitor/camera";
+import { FirebaseError } from "firebase/app";
 
 interface User {
     id: string,
@@ -61,13 +62,15 @@ export const users: User[] = [
 
     }
 ]
-export const setCurrentUser = (user: User) => { currentUser = user };
+
+export const setCurrentUser = (user: User | undefined) => { currentUser = user };
+
 //dahas onra
-export let currentUser = users[2];
+export let currentUser: User | undefined = undefined;
 
 export const GetGroupsKeys = () => {
     return new Promise<string[]>((resolve, reject) => {
-        const docRef = doc(firestore, "users", currentUser.id);
+        const docRef = doc(firestore, "users", currentUser!.id);
         getDoc(docRef).then((result) => {
             //console.log(result.get("groups"));
             resolve(result.get("groups"));
@@ -131,11 +134,11 @@ export const GetSummary = (groupID: string) => {
                     const transactionOwner = result.get("owner") as string;
                     const splitters = result.get("splitters") as string[];
 
-                    const isCurrentUserOwner = transactionOwner == currentUser.id;
+                    const isCurrentUserOwner = transactionOwner == currentUser!.id;
                     if (isCurrentUserOwner) {
                         const owe = transactionAmount / splitters.length * (splitters.length - 1);
                         amount += owe;
-                        splitters.filter(splitter => splitter != currentUser.id).forEach(splitter => {
+                        splitters.filter(splitter => splitter != currentUser!.id).forEach(splitter => {
 
                             const owe = transactionAmount / splitters.length;
                             const oweAmount = owes.get(splitter) ?? 0;
@@ -169,7 +172,7 @@ export const GetSummary = (groupID: string) => {
 export const GetFriends = () => {
     return new Promise<Friend[]>((resolve, reject) => {
         //firebase linki veriyor gibi düşün
-        const userDocRef = doc(firestore, "users", currentUser.id);
+        const userDocRef = doc(firestore, "users", currentUser!.id);
         //onSnapshot(collection(firestore, "groups"), (doc) => console.log(doc))
         getDoc(userDocRef).then((userData) => {
             const friendsKeys = userData.get("friends") as string[];
@@ -193,7 +196,7 @@ export const GetGroupUsers = (groupID: string) => {
         //onSnapshot(collection(firestore, "groups"), (doc) => console.log(doc))
         getDoc(groupDocRef).then((groupData) => {
             const friendsKeys = groupData.get("users") as string[];
-            const friends = friendsKeys.filter(key => key != currentUser.id).map(key => {
+            const friends = friendsKeys.filter(key => key != currentUser!.id).map(key => {
                 return {
                     id: key,
                     username: getUserNameById(key)
@@ -207,7 +210,7 @@ export const GetGroupUsers = (groupID: string) => {
 }
 
 export const AddGroup = (groupName: string, friends: Friend[], photo: UserPhoto) => {
-    const groupUsers = [currentUser.id, ...friends.map(f => f.id)]
+    const groupUsers = [currentUser!.id, ...friends.map(f => f.id)]
 
     const groupColRef = collection(firestore, "groups");
     addDoc(groupColRef, { name: groupName, users: groupUsers, transactions: [] as string[] }).then(groupData => {
@@ -226,7 +229,7 @@ export const AddGroup = (groupName: string, friends: Friend[], photo: UserPhoto)
 }
 
 export const onGroupsChanged = (handler: any) => {
-    onSnapshot(doc(firestore, "users", currentUser.id), { includeMetadataChanges: true }, (doc) => {
+    onSnapshot(doc(firestore, "users", currentUser!.id), { includeMetadataChanges: true }, (doc) => {
         if (doc.metadata.hasPendingWrites) return
         handler()
     })
@@ -265,10 +268,10 @@ export const GetTransactionTypes = () => {
 export const GetAllTransactions = () => {
     return new Promise<Transaction[]>((resolve, reject) => {
         const transactionsColRef = collection(firestore, "transactions");
-        const userTransactionsQuery = query(transactionsColRef, where("splitters", "array-contains", currentUser.id));
+        const userTransactionsQuery = query(transactionsColRef, where("splitters", "array-contains", currentUser!.id));
 
         const groupsColRef = collection(firestore, "groups");
-        const userGroupsQuery = query(groupsColRef, where("users", "array-contains", currentUser.id));
+        const userGroupsQuery = query(groupsColRef, where("users", "array-contains", currentUser!.id));
 
         let groups = new Map<string, string>();
         getDocs(userGroupsQuery).then(groupsSnapshot => {
@@ -312,8 +315,7 @@ export const DownloadImage = (groupId: string) => {
         const storageRef = ref(storage, 'images/' + groupId);
 
         getDownloadURL(storageRef).then((data) => {
-            console.log(data);
             resolve(data);
-        }).catch(() => resolve(undefined));
+        }).catch((e: FirebaseError) => { resolve(undefined); });
     });
 }

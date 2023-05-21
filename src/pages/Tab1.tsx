@@ -34,11 +34,8 @@ const Tab1: React.FC = () => {
     setSummaries(originalSummaries.filter(group => group.GroupName.toLowerCase().includes(ev.target.value!.toLowerCase())));
   }
 
-
-
-
   function navToDetail(group: GroupSummary) {
-    history.push("/groups/detail/" + group.GroupID, group);
+    history.push("/tabs/groups/detail/" + group.GroupID, group);
   }
 
   return (

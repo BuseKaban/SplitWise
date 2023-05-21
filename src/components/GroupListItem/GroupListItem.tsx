@@ -1,4 +1,4 @@
-import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText, IonIcon } from '@ionic/react';
+import { IonItem, IonAvatar, IonGrid, IonRow, IonLabel, IonText, IonIcon, IonImg } from '@ionic/react';
 import './GroupListItem.scss'
 import { users } from '../../utils/Users';
 import { amountFormatter } from '../../utils/Utils';
@@ -42,13 +42,13 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
     return (
         <IonItem className={props.className + " group-list-item"} lines={props.lines ?? "full"} onClick={props.onClickItem} button={props.onClickItem != undefined}>
             {props.imagePath ?
-                <IonAvatar slot="start" className='group-list-item-avatar'>
-                    <img alt="Group Icon" src={props.imagePath} />
+                <IonAvatar slot="start" className='bg-green-100 mr-0 group-list-item-avatar'>
+                    <IonImg alt="Group Icon" src={props.imagePath} />
                 </IonAvatar>
                 :
-                <IonIcon className='bg-green-100 p-3 rounded-2xl mr-4 group-list-item-avatar' slot='start' icon={peopleOutline} color="primary"></IonIcon>
+                <IonIcon className=' bg-green-100 p-3 rounded-2xl mr-0 group-list-item-icon' slot='start' icon={peopleOutline} color="primary"></IonIcon>
             }
-            <IonGrid className='group-list-item-grid'>
+            <IonGrid className='ml-4 group-list-item-grid pl-0'>
                 <IonRow className='group-list-item-text title-text'>{props.groupName}</IonRow>
                 <IonRow>{summaryTitle(props.totalOwe)}</IonRow>
                 {showDetails()}

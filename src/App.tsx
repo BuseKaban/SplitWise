@@ -45,53 +45,60 @@ setupIonicReact();
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/login" >
-            <Login />
-          </Route>
+      <Route
+        path={"/login"}>
+        <Login></Login>
+      </Route>
+      <Route
+        path="/tabs"
+        render={() => (
+          <IonTabs>
+            <IonRouterOutlet>
 
-          <Route exact path="/groups">
-            <Tab1 />
-          </Route>
+              <Route path="/tabs/groups/detail/:id" component={GroupDetailPage} />
 
-          <Route path="/groups/detail/:id" component={GroupDetailPage} />
+              <Route exact path="/tabs/groups">
+                <Tab1 />
+              </Route>
 
-          <Route exact path="/friends">
-            <Tab2 />
-          </Route>
+              <Route path="/tabs/friends">
+                <Tab2 />
+              </Route>
 
-          <Route path="/activity">
-            <Tab3 />
-          </Route>
-          <Route path="/account">
-            <Tab4 />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/login" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/groups">
-            <IonIcon aria-hidden="true" icon={peopleSharp} />
-            <IonLabel>Gruplar</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/friends">
-            <IonIcon aria-hidden="true" icon={person} />
-            {/* icon üstü yazı */}
-            <IonLabel>Arkadaşlar</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/activity">
-            <IonIcon aria-hidden="true" icon={receipt} />
-            <IonLabel>Detaylar</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab4" href="/account">
-            <IonIcon aria-hidden="true" icon={personCircleSharp} />
-            <IonLabel>Hesabım</IonLabel>
-          </IonTabButton>
+              <Route path="/tabs/activity">
+                <Tab3 />
+              </Route>
+              <Route path="/tabs/account">
+                <Tab4 />
+              </Route>
 
-        </IonTabBar>
-      </IonTabs>
+            </IonRouterOutlet>
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="tab1" href="/tabs/groups">
+                <IonIcon aria-hidden="true" icon={peopleSharp} />
+                <IonLabel>Gruplar</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab2" href="/tabs/friends">
+                <IonIcon aria-hidden="true" icon={person} />
+                {/* icon üstü yazı */}
+                <IonLabel>Arkadaşlar</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab3" href="/tabs/activity">
+                <IonIcon aria-hidden="true" icon={receipt} />
+                <IonLabel>Detaylar</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab4" href="/tabs/account">
+                <IonIcon aria-hidden="true" icon={personCircleSharp} />
+                <IonLabel>Hesabım</IonLabel>
+              </IonTabButton>
+
+            </IonTabBar>
+          </IonTabs>
+        )}
+      />
+      <Route exact path="/">
+        <Redirect to="/login" />
+      </Route>
     </IonReactRouter>
   </IonApp>
 );

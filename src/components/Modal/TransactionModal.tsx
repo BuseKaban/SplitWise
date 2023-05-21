@@ -61,8 +61,8 @@ const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
       amount: transactionAmount,
       date: transactionDate,
       name: transactionName,
-      owner: currentUser.id,
-      splitters: [currentUser.id, ...selectedFriends.map(f => f.id)],
+      owner: currentUser!.id,
+      splitters: [currentUser!.id, ...selectedFriends.map(f => f.id)],
       type: transactionType,
       groupID: props.groupId
     } as Transaction);

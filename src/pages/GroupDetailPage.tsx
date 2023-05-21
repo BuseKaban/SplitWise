@@ -21,21 +21,23 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
   const [summary, setSummary] = useState<GroupSummary>()
 
   useEffect(() => {
+    GetSummary(match.params.id).then((result) => {
+      setSummary(result);
+    })
+
     GetTransactions(match.params.id).then((result) => {
       setResults(result);
     })
 
-    GetSummary(match.params.id).then((result) => {
-      setSummary(result);
-    })
+
   }, []);
 
 
   function getOweAmount(transaction: Transaction): number {
 
-    if (transaction.owner == currentUser.id) {
+    if (transaction.owner == currentUser!.id) {
       return transaction.amount / transaction.splitters.length * (transaction.splitters.length - 1);
-    } else if (transaction.splitters.find(user => user == currentUser.id)) {
+    } else if (transaction.splitters.find(user => user == currentUser!.id)) {
       return transaction.amount / transaction.splitters.length;
     } else {
       return 0;
@@ -51,30 +53,35 @@ const GroupDetailPage: React.FC<GroupDetailPageProps> = ({ match }) => {
             <IonTitle>Grup Detayları</IonTitle>
           </IonButtons>
         </IonToolbar>
-        <GroupListItem
-          className='group-summary-header'
-          lines='none'
-          groupName={summary?.GroupName}
-          totalOwe={summary?.SummaryAmount}
-          details={summary?.Details}
-          imagePath={summary?.Base64Image}
-        ></GroupListItem>
+
       </IonHeader>
       <IonContent className="ion-padding">
+        {summary?.GroupName &&
+          <>
+            <GroupListItem
+              className='group-summary-header'
+              lines='full'
+              groupName={summary?.GroupName}
+              totalOwe={summary?.SummaryAmount}
+              details={summary?.Details}
+              imagePath={summary?.Base64Image}
+            ></GroupListItem>
+            <IonList className='p-0 pt-4'>
+              {
+                results.map(transaction =>
+                  <TransactionListItem key={transaction.id}
+                    // routerLink={"/groups/detail/" + transaction.groupID}
+                    date={transaction.date}
+                    transactionName={transaction.name}
+                    totalAmount={transaction.amount}
+                    oweAmount={getOweAmount(transaction)}
+                    transactionOwnerID={transaction.owner} />
+                )
+              }
+            </IonList>
+          </>
+        }
 
-        <IonList className='p-0'>
-          {
-            results.map(transaction =>
-              <TransactionListItem key={transaction.id}
-                // routerLink={"/groups/detail/" + transaction.groupID}
-                date={transaction.date}
-                transactionName={transaction.name}
-                totalAmount={transaction.amount}
-                oweAmount={getOweAmount(transaction)}
-                transactionOwnerID={transaction.owner} />
-            )
-          }
-        </IonList>
         <TransactionModal groupId={match.params.id}></TransactionModal>
 
       </IonContent>

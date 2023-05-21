@@ -26,7 +26,10 @@ const Tab3: React.FC = () => {
   }, [])
 
   function isOwner(userId: string) {
-    return userId == currentUser.id;
+    if (currentUser) {
+      return currentUser.id == userId
+    }
+
   }
 
   function getDateLabel(transaction: Transaction) {
@@ -56,13 +59,13 @@ const Tab3: React.FC = () => {
         </IonHeader>
         <IonList>
           {transactions.map(transaction =>
-            <IonItem key={transaction.id} className={transaction.owner == currentUser.id ? "owner" : "nonowner"} routerLink={"/groups/detail/" + transaction.groupID}>
+            <IonItem key={transaction.id} className={isOwner(transaction.owner) ? "owner" : "nonowner"} routerLink={"/tabs/groups/detail/" + transaction.groupID}>
               {photos.find(photo => photo.key == transaction.groupID) ?
                 <IonAvatar slot="start" className='group-list-item-avatar'>
                   <img alt="Group Icon" src={photos.find(photo => photo.key == transaction.groupID)?.dataUrl} />
                 </IonAvatar>
                 :
-                <IonIcon className='bg-green-100 p-3 rounded-2xl mr-4 group-list-item-avatar' slot='start' icon={peopleOutline} color="primary"></IonIcon>
+                <IonIcon className='bg-green-100 p-3 rounded-2xl mr-4 group-list-item-icon' slot='start' icon={peopleOutline} color="primary"></IonIcon>
               }
               <IonLabel>
                 <h3>{isOwner(transaction.owner) ? "Sen" : getUserNameById(transaction.owner)} / {transaction.groupName}</h3>

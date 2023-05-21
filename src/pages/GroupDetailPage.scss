@@ -1,14 +1,15 @@
 .group-summary-header {
     --inner-padding-end: 0px;
     --padding-start: 16px;
+    margin-top: -16px;
+    margin-right: -16px;
+    margin-left: -16px;
 
     .group-list-item-grid {
         --ion-grid-padding: 16px;
     }
 
     .group-list-item-avatar {
-        width: 48px;
-        height: 48px;
         margin: 0 !important;
     }
 }
