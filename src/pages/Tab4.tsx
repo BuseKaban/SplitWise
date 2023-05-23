@@ -1,6 +1,6 @@
 import { IonButton, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonModal, IonPage, IonRow, IonText, IonTitle, IonToolbar, useIonAlert } from '@ionic/react';
-import { Chart as ChartJS, ArcElement, Legend, Tooltip, ChartData } from 'chart.js';
-import { Chart } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Legend, Tooltip, ChartData, DoughnutController } from 'chart.js';
+import { Chart, Doughnut } from 'react-chartjs-2';
 import { GetAllTransactions, Transaction, currentUser, onGroupsChanged, setCurrentUser } from '../utils/Users';
 import { useHistory } from 'react-router';
 import { useState, useEffect } from 'react';
@@ -12,7 +12,7 @@ import { tr } from 'date-fns/locale';
 import { amountFormatter } from '../utils/Utils';
 const Tab4: React.FC = () => {
   const history = useHistory();
-  ChartJS.register(ArcElement, Tooltip, Legend);
+  ChartJS.register(ArcElement, Tooltip, Legend, DoughnutController);
 
   const [chartValues, setChartValues] = useState(new Map<string, number>);
   const [toDate, setToDate] = useState(new Date());
@@ -27,12 +27,12 @@ const Tab4: React.FC = () => {
     labels: Array.from(chartValues).map(value => value[0]),
     datasets: [
       {
-        label: '# of Votes',
+        label: 'Ödenen miktar',
         data: Array.from(chartValues).map(value => value[1]),
         backgroundColor: [
-          'rgba(255, 205, 86, 1)',
           'rgba(255, 99, 132, 1)',
           'rgba(75, 192, 192, 1)',
+          'rgba(255, 205, 86, 1)',
           'rgba(54, 162, 235, 1)',
           'rgba(153, 102, 255, 1)',
         ],
@@ -122,7 +122,7 @@ const Tab4: React.FC = () => {
       const fromAmount = fromDateAmounts.get(key[0]) ?? 0;
       const toAmount = toDateAmounts.get(key[0]) ?? 0;
 
-      const perc = (fromAmount - toAmount) / toAmount * 100;
+      const perc = (toAmount - fromAmount) / fromAmount * 100;
       const color = data.datasets[0].backgroundColor as string[];
 
       return (
@@ -134,7 +134,7 @@ const Tab4: React.FC = () => {
             </IonRow>
             <IonRow>
               <IonCol size='4' >
-                <p className='w-'> {amountFormatter(toAmount)} </p>
+                <p> {amountFormatter(fromAmount)} </p>
               </IonCol>
               <IonCol size='4' className='ion-text-center'>
 
@@ -147,7 +147,7 @@ const Tab4: React.FC = () => {
                 }
               </IonCol>
               <IonCol size='4' className='ion-text-end'>
-                <p> {amountFormatter(fromAmount)} </p>
+                <p> {amountFormatter(toAmount)} </p>
               </IonCol>
             </IonRow>
           </IonCol>
