@@ -38,6 +38,7 @@ import './App.css';
 /* Theme variables */
 import './theme/variables.css';
 import GroupDetailPage from './pages/GroupDetailPage';
+import { currentUser } from './utils/Users';
 
 
 setupIonicReact();
@@ -51,7 +52,7 @@ const App: React.FC = () => (
       </Route>
       <Route
         path="/tabs"
-        render={() => (
+        render={() => (currentUser != undefined ?
           <IonTabs>
             <IonRouterOutlet>
 
@@ -94,7 +95,7 @@ const App: React.FC = () => (
 
             </IonTabBar>
           </IonTabs>
-        )}
+          : <Redirect to="/login" />)}
       />
       <Route exact path="/">
         <Redirect to="/login" />

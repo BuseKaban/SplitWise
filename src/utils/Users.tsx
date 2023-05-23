@@ -22,6 +22,8 @@ interface Group {
     users: User[]
 }
 
+export const users: User[] = [
+]
 
 export interface Transaction {
     groupID: string;
@@ -42,25 +44,6 @@ export interface GroupSummary {
     Details: Map<string, number>
     Base64Image?: string;
 }
-
-export const users: User[] = [
-    {
-        id: "DSuSrhD3OwmwgWNtLznz",
-        username: "eftelya",
-        password: "1",
-    },
-    {
-        id: "gtL8uFDNi6or9gikZCqE",
-        username: "baran",
-        password: "1",
-    },
-    {
-        id: "7PoyHeON9BwJUi7PnGVh",
-        username: "yigit",
-        password: "1"
-
-    }
-]
 
 export const setCurrentUser = (user: User | undefined) => { currentUser = user };
 
@@ -184,7 +167,6 @@ export const GetFriends = () => {
 
             resolve(friends);
         });
-
     })
 }
 
@@ -336,4 +318,57 @@ export const DownloadImage = (groupId: string) => {
             resolve(data);
         }).catch((e: FirebaseError) => { resolve(undefined); });
     });
+}
+
+
+export const getLoginUser = (username: string, password: string) => {
+    return new Promise<User>((resolve, reject) => {
+        const userColRef = collection(firestore, "users");
+        const userQuery = query(userColRef, where("name", "==", username), where("password", "==", password));
+
+        getDocs(userQuery).then(results => {
+            if (results.size == 1) {
+                const user = {
+                    id: results.docs[0].id,
+                    password: results.docs[0].get("password"),
+                    username: results.docs[0].get("name")
+                } as User
+
+                resolve(user);
+            } else {
+                reject("User not found!")
+            }
+        })
+    });
+}
+
+export const updateUsers = () => {
+    return new Promise<void>((resolve, reject) => {
+        const usersCol = collection(firestore, "users");
+        getDocs(usersCol).then(results => {
+            results.forEach(user =>
+                users.push({ id: user.id, username: user.get("name"), password: "" }))
+            resolve()
+        })
+    })
+}
+
+export const registerUser = (username: string, password: string) => {
+    return new Promise<User>((resolve, reject) => {
+        const userColRef = collection(firestore, "users");
+        const userObj = { name: username, password: password, friends: [] as string[], groups: [] as string[] };
+        getDocs(userColRef).then(users => {
+            users.forEach(user => {
+                if (user.get("name") == username) {
+                    reject("userexist")
+                    return
+                }
+            })
+            addDoc(userColRef, userObj).then(
+                user => resolve({ id: user.id, username: username, password: password })
+            )
+        });
+
+
+    })
 }

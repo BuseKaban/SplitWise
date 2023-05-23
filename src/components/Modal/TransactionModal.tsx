@@ -1,4 +1,4 @@
-import { IonItem, IonList, IonModal, IonSearchbar, IonFab, IonFabButton, IonIcon, IonButton, IonInput, IonLabel, IonSelect, IonSelectOption, IonDatetime, IonDatetimeButton } from '@ionic/react';
+import { IonItem, IonList, IonModal, IonSearchbar, IonFab, IonFabButton, IonIcon, IonButton, IonInput, IonLabel, IonSelect, IonSelectOption, IonDatetime, IonDatetimeButton, useIonAlert } from '@ionic/react';
 import { addOutline, close } from 'ionicons/icons';
 
 import { useEffect, useRef, useState } from 'react';
@@ -17,7 +17,7 @@ const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
   const [filterText, setFilterText] = useState("");
   const [transactionName, setTransactionName] = useState("");
   const [transactionAmount, setTransactionAmount] = useState(0);
-  const [transactionType, setTransactionType] = useState("");
+  const [transactionType, setTransactionType] = useState(GetTransactionTypes()[-1]);
   const [transactionDate, setTransactionDate] = useState(new Date());
 
   const modal = useRef<HTMLIonModalElement>(null);
@@ -57,17 +57,28 @@ const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
 
 
   function CreateTransaction() {
-    console.log(transactionDate)
-    AddTransaction({
-      amount: transactionAmount,
-      date: transactionDate,
-      name: transactionName,
-      owner: currentUser!.id,
-      splitters: [currentUser!.id, ...selectedFriends.map(f => f.id)],
-      type: transactionType,
-      groupID: props.groupId
-    } as Transaction);
+    if (transactionAmount > 0 && transactionName.length > 0 && selectedFriends.length > 0) {
+      AddTransaction({
+        amount: transactionAmount,
+        date: transactionDate,
+        name: transactionName,
+        owner: currentUser!.id,
+        splitters: [currentUser!.id, ...selectedFriends.map(f => f.id)],
+        type: transactionType,
+        groupID: props.groupId
+      } as Transaction);
+    }
+    else {
+      presentAlert({
+        mode: "ios",
+        header: 'Lütfen tüm alanları doldurun',
+        buttons: [{ text: "Tekrar Dene", role: "cancel" }],
+
+      })
+    }
   }
+
+  const [presentAlert] = useIonAlert();
 
   return (
 
@@ -91,7 +102,7 @@ const TransactionModal: React.FC<TransactionModalInputs> = (props) => {
               ></IonInput>
             </IonItem>
             <IonItem mode='ios'>
-              <IonSelect label="Tür :" placeholder='Tür seçin' interface='action-sheet' onIonChange={(e) => setTransactionType(e.detail.value ?? "")}>
+              <IonSelect label="Tür :" value={transactionType} placeholder='Tür seçin' interface='action-sheet' onIonChange={(e) => setTransactionType(e.detail.value ?? "")}>
                 {GetTransactionTypes().map(type =>
                   <IonSelectOption key={type} value={type}>{type}</IonSelectOption>
                 )}

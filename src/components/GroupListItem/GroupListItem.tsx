@@ -33,9 +33,9 @@ const GroupListItem: React.FC<ContainerProps> = (props) => {
 
         return Array.from(props.details).map(([key, value]) => {
             if (value > 0)
-                return <IonRow key={key} className='text-size'>{users.find((User) => User.id == key)?.username} arkadaşına <IonText color="success">&nbsp;{amountFormatter(value)}&nbsp;</IonText> borcun var</IonRow>
+                return <IonRow key={key} className='text-size'>{users.find((User) => User.id == key)?.username} arkadaşına <IonText color="danger">&nbsp;{amountFormatter(value)}&nbsp;</IonText> borcun var</IonRow>
             else
-                return <IonRow key={key} className='text-size'>{users.find((User) => User.id == key)?.username} arkadaşının sana <IonText color="danger">&nbsp;{amountFormatter(value)}&nbsp;</IonText> borcu var</IonRow>
+                return <IonRow key={key} className='text-size'>{users.find((User) => User.id == key)?.username} arkadaşının sana <IonText color="success">&nbsp;{amountFormatter(value)}&nbsp;</IonText> borcu var</IonRow>
         })
     }
 
